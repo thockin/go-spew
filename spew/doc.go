@@ -107,6 +107,11 @@ The following configuration options are available:
 		DisableLengths specifies whether to disable the printing of lengths.
 		This also disables the printing of capacities.
 
+	* TrailingCommas
+		TrailingCommas specifies whether to always include a
+		trailing comma, Go-style. This is useful to avoid false positives when
+		diffing data structures in tests.
+
 	* ContinueOnMethod
 		Enables recursion into types after invoking error and Stringer interface
 		methods. Recursion after method invocation is disabled by default.
