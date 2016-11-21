@@ -236,11 +236,7 @@ func (d *dumpState) dumpSlice(v reflect.Value) {
 	// Recursively call dump for each item.
 	for i := 0; i < numEntries; i++ {
 		d.dump(d.unpackValue(v.Index(i)))
-		if i < (numEntries - 1) {
-			d.w.Write(commaNewlineBytes)
-		} else {
-			d.w.Write(newlineBytes)
-		}
+		d.writeComma(i < (numEntries - 1))
 	}
 }
 
@@ -396,11 +392,7 @@ func (d *dumpState) dump(v reflect.Value) {
 				d.w.Write(colonSpaceBytes)
 				d.ignoreNextIndent = true
 				d.dump(d.unpackValue(v.MapIndex(key)))
-				if i < (numEntries - 1) {
-					d.w.Write(commaNewlineBytes)
-				} else {
-					d.w.Write(newlineBytes)
-				}
+				d.writeComma(i < (numEntries - 1))
 			}
 		}
 		d.depth--
@@ -423,11 +415,7 @@ func (d *dumpState) dump(v reflect.Value) {
 				d.w.Write(colonSpaceBytes)
 				d.ignoreNextIndent = true
 				d.dump(d.unpackValue(v.Field(i)))
-				if i < (numFields - 1) {
-					d.w.Write(commaNewlineBytes)
-				} else {
-					d.w.Write(newlineBytes)
-				}
+				d.writeComma(i < (numFields - 1))
 			}
 		}
 		d.depth--
@@ -449,6 +437,16 @@ func (d *dumpState) dump(v reflect.Value) {
 		} else {
 			fmt.Fprintf(d.w, "%v", v.String())
 		}
+	}
+}
+
+// writeComma emits a comma if hasMoreElements is true, or if trailing commas
+// are always enabled.
+func (d *dumpState) writeComma(hasMoreElements bool) {
+	if hasMoreElements || d.cs.TrailingCommas {
+		d.w.Write(commaNewlineBytes)
+	} else {
+		d.w.Write(newlineBytes)
 	}
 }
 
