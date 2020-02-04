@@ -334,10 +334,14 @@ func (f *formatState) format(v reflect.Value) {
 		} else {
 			vt := v.Type()
 			for i := 0; i < numFields; i++ {
+				vtf := vt.Field(i)
+				// StructField has an IsExported() method, but only in 1.17+.
+				if f.cs.DisableUnexported && vtf.PkgPath != "" {
+					continue
+				}
 				if i > 0 {
 					f.fs.Write(spaceBytes)
 				}
-				vtf := vt.Field(i)
 				if f.fs.Flag('+') || f.fs.Flag('#') {
 					f.fs.Write([]byte(vtf.Name))
 					f.fs.Write(colonBytes)
