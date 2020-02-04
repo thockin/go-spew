@@ -409,8 +409,12 @@ func (d *dumpState) dump(v reflect.Value) {
 			vt := v.Type()
 			numFields := v.NumField()
 			for i := 0; i < numFields; i++ {
-				d.indent()
 				vtf := vt.Field(i)
+				// StructField has an IsExported() method, but only in 1.17+.
+				if d.cs.DisableUnexported && vtf.PkgPath != "" {
+					continue
+				}
+				d.indent()
 				d.w.Write([]byte(vtf.Name))
 				d.w.Write(colonSpaceBytes)
 				d.ignoreNextIndent = true
