@@ -133,6 +133,7 @@ func initSpewTests() {
 	scsNoPtrAddr := &spew.ConfigState{DisablePointerAddresses: true}
 	scsNoCap := &spew.ConfigState{DisableCapacities: true}
 	scsTrailingComma := &spew.ConfigState{Indent: " ", TrailingCommas: true}
+	scsNoUnexported := &spew.ConfigState{Indent: " ", DisableUnexported: true}
 
 	// Variables for tests on types which implement Stringer interface with and
 	// without a pointer receiver.
@@ -163,6 +164,12 @@ func initSpewTests() {
 
 	// Variable for tests on types which implement error interface.
 	te := customError(10)
+
+	// unexported fields.
+	tunexp := struct {
+		X int
+		y int
+	}{123, 456}
 
 	spewTests = []spewTest{
 		{scsDefault, fCSFdump, "", int8(127), "(int8) 127\n"},
@@ -226,6 +233,10 @@ func initSpewTests() {
 				"  (string) (len=3) \"one\": (int) 1,\n" +
 				" },\n" +
 				"}\n"},
+		{scsNoUnexported, fCSSdump, "", tunexp, "(struct { X int; y int }) {\n X: (int) 123,\n}\n"},
+		{scsNoUnexported, fCSSprintln, "", tunexp, "{123}\n"},
+		{scsNoUnexported, fCSSprintf, "%v", tunexp, "{123}"},
+		{scsNoUnexported, fCSSprintf, "%#v", tunexp, "(struct { X int; y int }){X:(int)123}"},
 	}
 }
 
