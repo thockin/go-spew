@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package spew
+package spew // github.com/thockin/go-spew/spew
 
 import (
 	"fmt"
