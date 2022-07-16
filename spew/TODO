@@ -1,0 +1,9 @@
+All PRs
+All issues
+nil not <nil>
+optimize
+ - avoid reflect first
+& isntead of <*>
+use `string` where possible in tests
+docs
+remove linewraps in tests
