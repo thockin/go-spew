@@ -92,6 +92,10 @@ type ConfigState struct {
 	// braces (JSON-style) or curly braces (Go-style) in dumps.
 	DumpListSquareBraces bool
 
+	// AbbreviateEmpty specifies whether to render empty lists, maps, and
+	// structs in a shortened, one-line form ([] and {}).
+	AbbreviateEmpty bool
+
 	// ContinueOnMethod specifies whether or not recursion should continue once
 	// a custom error or Stringer interface is invoked.  The default, false,
 	// means it will print the results of invoking the custom error or Stringer
@@ -132,6 +136,7 @@ var CleanConfig = ConfigState{
 	DisableTypes:            true,
 	DisableLengths:          true,
 	DumpListSquareBraces:    true,
+	AbbreviateEmpty:         true,
 }
 
 // Errorf is a wrapper for fmt.Errorf that treats each argument as if it were

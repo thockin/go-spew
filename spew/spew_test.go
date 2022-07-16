@@ -227,7 +227,7 @@ func initSpewTests() {
 				"  (string) (len=3) \"one\": (int) 1,\n" +
 				" },\n" +
 				"}\n"},
-		{scsClean, fCSSdump, "", make([]string, 0, 10), "[\n]\n"},
+		{scsClean, fCSSdump, "", make([]string, 0, 10), "[]\n"},
 		{scsClean, fCSSdump, "", make([]string, 1, 10), "[\n  \"\"\n]\n"},
 		{scsClean, fCSSprintln, "", make([]int, 1, 10), "[0]\n"},
 		{scsClean, fCSSprintf, "%v\n", make([]int, 1, 10), "[0]\n"},
