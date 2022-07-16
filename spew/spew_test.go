@@ -89,6 +89,7 @@ func (f spewFunc) String() string {
 // spewTest is used to describe a test to be performed against the public
 // functions of the spew package or ConfigState.
 type spewTest struct {
+	line   string // use line() to fill this
 	cs     *spew.ConfigState
 	f      spewFunc
 	format string
@@ -166,52 +167,52 @@ func initSpewTests() {
 	te := customError(10)
 
 	spewTests = []spewTest{
-		{scsDefault, fCSFdump, "", int8(127), "(int8) 127\n"},
-		{scsDefault, fCSFprint, "", int16(32767), "32767"},
-		{scsDefault, fCSFprintf, "%v", int32(2147483647), "2147483647"},
-		{scsDefault, fCSFprintln, "", int(2147483647), "2147483647\n"},
-		{scsDefault, fCSPrint, "", int64(9223372036854775807), "9223372036854775807"},
-		{scsDefault, fCSPrintln, "", uint8(255), "255\n"},
-		{scsDefault, fCSSdump, "", uint8(64), "(uint8) 64\n"},
-		{scsDefault, fCSSprint, "", complex(1, 2), "(1+2i)"},
-		{scsDefault, fCSSprintf, "%v", complex(float32(3), 4), "(3+4i)"},
-		{scsDefault, fCSSprintln, "", complex(float64(5), 6), "(5+6i)\n"},
-		{scsDefault, fCSErrorf, "%#v", uint16(65535), "(uint16)65535"},
-		{scsDefault, fCSNewFormatter, "%v", uint32(4294967295), "4294967295"},
-		{scsDefault, fErrorf, "%v", uint64(18446744073709551615), "18446744073709551615"},
-		{scsDefault, fFprint, "", float32(3.14), "3.14"},
-		{scsDefault, fFprintln, "", float64(6.28), "6.28\n"},
-		{scsDefault, fPrint, "", true, "true"},
-		{scsDefault, fPrintln, "", false, "false\n"},
-		{scsDefault, fSdump, "", complex(-10, -20), "(complex128) (-10-20i)\n"},
-		{scsDefault, fSprint, "", complex(-1, -2), "(-1-2i)"},
-		{scsDefault, fSprintf, "%v", complex(float32(-3), -4), "(-3-4i)"},
-		{scsDefault, fSprintln, "", complex(float64(-5), -6), "(-5-6i)\n"},
-		{scsNoMethods, fCSFprint, "", ts, "test"},
-		{scsNoMethods, fCSFprint, "", &ts, "<*>test"},
-		{scsNoMethods, fCSFprint, "", tps, "test"},
-		{scsNoMethods, fCSFprint, "", &tps, "<*>test"},
-		{scsNoPmethods, fCSFprint, "", ts, "stringer test"},
-		{scsNoPmethods, fCSFprint, "", &ts, "<*>stringer test"},
-		{scsNoPmethods, fCSFprint, "", tps, "test"},
-		{scsNoPmethods, fCSFprint, "", &tps, "<*>stringer test"},
-		{scsMaxDepth, fCSFprint, "", dt, "{{<max>} [<max>] [<max>] map[<max>]}"},
-		{scsMaxDepth, fCSFdump, "", dt, "(spew_test.depthTester) {\n" +
+		{line(), scsDefault, fCSFdump, "", int8(127), "(int8) 127\n"},
+		{line(), scsDefault, fCSFprint, "", int16(32767), "32767"},
+		{line(), scsDefault, fCSFprintf, "%v", int32(2147483647), "2147483647"},
+		{line(), scsDefault, fCSFprintln, "", int(2147483647), "2147483647\n"},
+		{line(), scsDefault, fCSPrint, "", int64(9223372036854775807), "9223372036854775807"},
+		{line(), scsDefault, fCSPrintln, "", uint8(255), "255\n"},
+		{line(), scsDefault, fCSSdump, "", uint8(64), "(uint8) 64\n"},
+		{line(), scsDefault, fCSSprint, "", complex(1, 2), "(1+2i)"},
+		{line(), scsDefault, fCSSprintf, "%v", complex(float32(3), 4), "(3+4i)"},
+		{line(), scsDefault, fCSSprintln, "", complex(float64(5), 6), "(5+6i)\n"},
+		{line(), scsDefault, fCSErrorf, "%#v", uint16(65535), "(uint16)65535"},
+		{line(), scsDefault, fCSNewFormatter, "%v", uint32(4294967295), "4294967295"},
+		{line(), scsDefault, fErrorf, "%v", uint64(18446744073709551615), "18446744073709551615"},
+		{line(), scsDefault, fFprint, "", float32(3.14), "3.14"},
+		{line(), scsDefault, fFprintln, "", float64(6.28), "6.28\n"},
+		{line(), scsDefault, fPrint, "", true, "true"},
+		{line(), scsDefault, fPrintln, "", false, "false\n"},
+		{line(), scsDefault, fSdump, "", complex(-10, -20), "(complex128) (-10-20i)\n"},
+		{line(), scsDefault, fSprint, "", complex(-1, -2), "(-1-2i)"},
+		{line(), scsDefault, fSprintf, "%v", complex(float32(-3), -4), "(-3-4i)"},
+		{line(), scsDefault, fSprintln, "", complex(float64(-5), -6), "(-5-6i)\n"},
+		{line(), scsNoMethods, fCSFprint, "", ts, "test"},
+		{line(), scsNoMethods, fCSFprint, "", &ts, "<*>test"},
+		{line(), scsNoMethods, fCSFprint, "", tps, "test"},
+		{line(), scsNoMethods, fCSFprint, "", &tps, "<*>test"},
+		{line(), scsNoPmethods, fCSFprint, "", ts, "stringer test"},
+		{line(), scsNoPmethods, fCSFprint, "", &ts, "<*>stringer test"},
+		{line(), scsNoPmethods, fCSFprint, "", tps, "test"},
+		{line(), scsNoPmethods, fCSFprint, "", &tps, "<*>stringer test"},
+		{line(), scsMaxDepth, fCSFprint, "", dt, "{{<max>} [<max>] [<max>] map[<max>]}"},
+		{line(), scsMaxDepth, fCSFdump, "", dt, "(spew_test.depthTester) {\n" +
 			" ic: (spew_test.indirCir1) {\n  <max depth reached>\n },\n" +
 			" arr: ([1]string) (len=1 cap=1) {\n  <max depth reached>\n },\n" +
 			" slice: ([]string) (len=1 cap=1) {\n  <max depth reached>\n },\n" +
 			" m: (map[string]int) (len=1) {\n  <max depth reached>\n }\n}\n"},
-		{scsContinue, fCSFprint, "", ts, "(stringer test) test"},
-		{scsContinue, fCSFdump, "", ts, "(spew_test.stringer) " +
+		{line(), scsContinue, fCSFprint, "", ts, "(stringer test) test"},
+		{line(), scsContinue, fCSFdump, "", ts, "(spew_test.stringer) " +
 			"(len=4) (stringer test) \"test\"\n"},
-		{scsContinue, fCSFprint, "", te, "(error: 10) 10"},
-		{scsContinue, fCSFdump, "", te, "(spew_test.customError) " +
+		{line(), scsContinue, fCSFprint, "", te, "(error: 10) 10"},
+		{line(), scsContinue, fCSFdump, "", te, "(spew_test.customError) " +
 			"(error: 10) 10\n"},
-		{scsNoPtrAddr, fCSFprint, "", tptr, "<*>{<*>{}}"},
-		{scsNoPtrAddr, fCSSdump, "", tptr, "(*spew_test.ptrTester)({\ns: (*struct {})({\n})\n})\n"},
-		{scsNoCap, fCSSdump, "", make([]string, 0, 10), "([]string) {\n}\n"},
-		{scsNoCap, fCSSdump, "", make([]string, 1, 10), "([]string) (len=1) {\n(string) \"\"\n}\n"},
-		{scsTrailingComma, fCSFdump, "", commaTester{
+		{line(), scsNoPtrAddr, fCSFprint, "", tptr, "<*>{<*>{}}"},
+		{line(), scsNoPtrAddr, fCSSdump, "", tptr, "(*spew_test.ptrTester)({\ns: (*struct {})({\n})\n})\n"},
+		{line(), scsNoCap, fCSSdump, "", make([]string, 0, 10), "([]string) {\n}\n"},
+		{line(), scsNoCap, fCSSdump, "", make([]string, 1, 10), "([]string) (len=1) {\n(string) \"\"\n}\n"},
+		{line(), scsTrailingComma, fCSFdump, "", commaTester{
 			slice: []interface{}{
 				map[string]int{"one": 1},
 			},
@@ -227,11 +228,11 @@ func initSpewTests() {
 				"  (string) (len=3) \"one\": (int) 1,\n" +
 				" },\n" +
 				"}\n"},
-		{scsClean, fCSSdump, "", make([]string, 0, 10), "[]\n"},
-		{scsClean, fCSSdump, "", make([]string, 1, 10), "[\n  \"\"\n]\n"},
-		{scsClean, fCSSprintln, "", make([]int, 1, 10), "[0]\n"},
-		{scsClean, fCSSprintf, "%v\n", make([]int, 1, 10), "[0]\n"},
-		{scsClean, fCSSprintf, "%#v\n", make([]int, 1, 10), "([]int)[0]\n"},
+		{line(), scsClean, fCSSdump, "", make([]string, 0, 10), "[]\n"},
+		{line(), scsClean, fCSSdump, "", make([]string, 1, 10), "[\n  \"\"\n]\n"},
+		{line(), scsClean, fCSSprintln, "", make([]int, 1, 10), "[0]\n"},
+		{line(), scsClean, fCSSprintf, "%v\n", make([]int, 1, 10), "[0]\n"},
+		{line(), scsClean, fCSSprintf, "%#v\n", make([]int, 1, 10), "([]int)[0]\n"},
 	}
 }
 
@@ -240,7 +241,7 @@ func TestSpew(t *testing.T) {
 	initSpewTests()
 
 	t.Logf("Running %d tests", len(spewTests))
-	for i, test := range spewTests {
+	for _, test := range spewTests {
 		buf := new(bytes.Buffer)
 		switch test.f {
 		case fCSFdump:
@@ -258,7 +259,7 @@ func TestSpew(t *testing.T) {
 		case fCSPrint:
 			b, err := redirStdout(func() { test.cs.Print(test.in) })
 			if err != nil {
-				t.Errorf("%v #%d %v", test.f, i, err)
+				t.Errorf("line %s: %v %v", test.line, test.f, err)
 				continue
 			}
 			buf.Write(b)
@@ -266,7 +267,7 @@ func TestSpew(t *testing.T) {
 		case fCSPrintln:
 			b, err := redirStdout(func() { test.cs.Println(test.in) })
 			if err != nil {
-				t.Errorf("%v #%d %v", test.f, i, err)
+				t.Errorf("line %s: %v %v", test.line, test.f, err)
 				continue
 			}
 			buf.Write(b)
@@ -307,7 +308,7 @@ func TestSpew(t *testing.T) {
 		case fPrint:
 			b, err := redirStdout(func() { spew.Print(test.in) })
 			if err != nil {
-				t.Errorf("%v #%d %v", test.f, i, err)
+				t.Errorf("line %s: %v %v", test.line, test.f, err)
 				continue
 			}
 			buf.Write(b)
@@ -315,7 +316,7 @@ func TestSpew(t *testing.T) {
 		case fPrintln:
 			b, err := redirStdout(func() { spew.Println(test.in) })
 			if err != nil {
-				t.Errorf("%v #%d %v", test.f, i, err)
+				t.Errorf("line %s: %v %v", test.line, test.f, err)
 				continue
 			}
 			buf.Write(b)
@@ -337,12 +338,12 @@ func TestSpew(t *testing.T) {
 			buf.WriteString(str)
 
 		default:
-			t.Errorf("%v #%d unrecognized function", test.f, i)
+			t.Errorf("line %s: %v unrecognized function", test.line, test.f)
 			continue
 		}
 		s := buf.String()
 		if test.want != s {
-			t.Errorf("ConfigState #%d\n got: %s want: %s", i, s, test.want)
+			t.Errorf("testcase on line %s:\n got: %swant: %s", test.line, s, test.want)
 			continue
 		}
 	}
