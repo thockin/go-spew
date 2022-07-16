@@ -92,14 +92,14 @@ func (e customError) Error() string {
 
 // stringizeWants converts a slice of wanted test output into a format suitable
 // for a test error message.
-func stringizeWants(wants []string) string {
+func stringizeWants(wants []string, secondaryFmt string) string {
 	s := ""
 	for i, want := range wants {
-		if i > 0 {
-			s += fmt.Sprintf("want%d: %s", i+1, want)
-		} else {
-			s += "want: " + want
+		if i == 0 {
+			s += want
+			continue
 		}
+		s += fmt.Sprintf(secondaryFmt, want)
 	}
 	return s
 }
