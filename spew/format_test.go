@@ -1491,8 +1491,8 @@ func TestFormatter(t *testing.T) {
 		spew.Fprintf(buf, test.format, test.in)
 		s := buf.String()
 		if testFailed(s, test.wants) {
-			t.Errorf("testcase on line %s: format: %q\n got: %s\n%s", test.line, test.format, s,
-				stringizeWants(test.wants))
+			t.Errorf("testcase on line %s: format: %q\n got: %s\nwant: %s", test.line, test.format, s,
+				stringizeWants(test.wants, "\n  or: %s"))
 			continue
 		}
 	}
