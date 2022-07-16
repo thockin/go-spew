@@ -1,0 +1,9 @@
+benchmark
+optimize
+ - avoid reflect first
+use `string` where possible in tests
+comprehend tests
+remove linewraps in tests
+update docs and example_test
+OmitNilValues?
+  - if I have a `[]*Foo{&Foo{}, &Foo{}, nil}` - should still print nil
