@@ -340,6 +340,11 @@ func (d *dumpState) dump(v reflect.Value) {
 			d.w.Write(nilAngleBytes)
 			break
 		}
+		if v.Len() == 0 && d.cs.AbbreviateEmpty {
+			d.w.Write(emptyListBytes)
+			break
+		}
+
 		fallthrough
 
 	case reflect.Array:
@@ -384,6 +389,10 @@ func (d *dumpState) dump(v reflect.Value) {
 			d.w.Write(nilAngleBytes)
 			break
 		}
+		if v.Len() == 0 && d.cs.AbbreviateEmpty {
+			d.w.Write(emptyBracesBytes)
+			break
+		}
 
 		d.w.Write(openBraceNewlineBytes)
 		d.depth++
@@ -409,6 +418,10 @@ func (d *dumpState) dump(v reflect.Value) {
 		d.w.Write(closeBraceBytes)
 
 	case reflect.Struct:
+		if v.NumField() == 0 && d.cs.AbbreviateEmpty {
+			d.w.Write(emptyBracesBytes)
+			break
+		}
 		d.w.Write(openBraceNewlineBytes)
 		d.depth++
 		if (d.cs.MaxDepth != 0) && (d.depth > d.cs.MaxDepth) {
