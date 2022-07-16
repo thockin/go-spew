@@ -133,6 +133,7 @@ func initSpewTests() {
 	scsNoPtrAddr := &spew.ConfigState{DisablePointerAddresses: true}
 	scsNoCap := &spew.ConfigState{DisableCapacities: true}
 	scsTrailingComma := &spew.ConfigState{Indent: " ", TrailingCommas: true}
+	scsClean := &spew.CleanConfig
 
 	// Variables for tests on types which implement Stringer interface with and
 	// without a pointer receiver.
@@ -226,6 +227,11 @@ func initSpewTests() {
 				"  (string) (len=3) \"one\": (int) 1,\n" +
 				" },\n" +
 				"}\n"},
+		{scsClean, fCSSdump, "", make([]string, 0, 10), "{\n}\n"},
+		{scsClean, fCSSdump, "", make([]string, 1, 10), "{\n  \"\"\n}\n"},
+		{scsClean, fCSSprintln, "", make([]int, 1, 10), "[0]\n"},
+		{scsClean, fCSSprintf, "%v\n", make([]int, 1, 10), "[0]\n"},
+		{scsClean, fCSSprintf, "%#v\n", make([]int, 1, 10), "([]int)[0]\n"},
 	}
 }
 

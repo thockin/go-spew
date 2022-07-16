@@ -116,6 +116,19 @@ type ConfigState struct {
 // The configuration can be changed by modifying the contents of spew.Config.
 var Config = ConfigState{Indent: " "}
 
+// CleanConfig is a pre-build ConfigState which offers the "best" configuration
+// for clean, simple output.  In other words, most of the decorations are
+// disabled.
+var CleanConfig = ConfigState{
+	Indent:                  "  ",
+	DisableMethods:          true,
+	DisablePointerAddresses: true,
+	DisableCapacities:       true,
+	DisablePointerMethods:   true,
+	DisableTypes:            true,
+	DisableLengths:          true,
+}
+
 // Errorf is a wrapper for fmt.Errorf that treats each argument as if it were
 // passed with a Formatter interface returned by c.NewFormatter.  It returns
 // the formatted string as a value that satisfies error.  See NewFormatter
