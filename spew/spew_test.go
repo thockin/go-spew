@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/thockin/go-spew/spew"
@@ -231,8 +232,8 @@ func initSpewTests() {
 		{line(), scsClean, fCSSdump, "", make([]string, 0, 10), "[]\n"},
 		{line(), scsClean, fCSSdump, "", make([]string, 1, 10), "[\n  \"\"\n]\n"},
 		{line(), scsClean, fCSSprintln, "", make([]int, 1, 10), "[0]\n"},
-		{line(), scsClean, fCSSprintf, "%v\n", make([]int, 1, 10), "[0]\n"},
-		{line(), scsClean, fCSSprintf, "%#v\n", make([]int, 1, 10), "([]int)[0]\n"},
+		{line(), scsClean, fCSSprintf, "%v", make([]int, 1, 10), "[0]"},
+		{line(), scsClean, fCSSprintf, "%#v", make([]int, 1, 10), "([]int)[0]"},
 	}
 }
 
@@ -343,7 +344,11 @@ func TestSpew(t *testing.T) {
 		}
 		s := buf.String()
 		if test.want != s {
-			t.Errorf("testcase on line %s:\n got: %swant: %s", test.line, s, test.want)
+			nl := ""
+			if !strings.HasSuffix(s, "\n") {
+				nl = "\n"
+			}
+			t.Errorf("testcase on line %s:\n got: %s%swant: %s", test.line, s, nl, test.want)
 			continue
 		}
 	}
