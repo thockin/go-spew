@@ -19,6 +19,7 @@ package spew_test
 import (
 	"fmt"
 	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/thockin/go-spew/spew"
@@ -112,6 +113,20 @@ func testFailed(result string, wants []string) bool {
 		}
 	}
 	return true
+}
+
+// line returns the line number of the caller, if possible.  This is useful in
+// tests with a large number of cases - when something goes wrong you can find
+// which case more easily.
+func line() string {
+	_, _, line, ok := runtime.Caller(1)
+	var s string
+	if ok {
+		s = fmt.Sprintf("%d", line)
+	} else {
+		s = "<??>"
+	}
+	return s
 }
 
 type sortableStruct struct {
