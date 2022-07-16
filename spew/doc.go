@@ -120,6 +120,10 @@ The following configuration options are available:
 		DumpListSquareBraces specifies whether to render lists with square
 		braces (JSON-style) or curly braces (Go-style) in dumps.
 
+	* AbbreviateEmpty
+		AbbreviateEmpty specifies whether to render empty lists, maps, and
+		structs in a shortened, one-line form ([] and {}).
+
 	* ContinueOnMethod
 		Enables recursion into types after invoking error and Stringer interface
 		methods. Recursion after method invocation is disabled by default.
