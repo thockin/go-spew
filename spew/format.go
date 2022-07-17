@@ -282,7 +282,11 @@ func (f *formatState) format(v reflect.Value) {
 		f.fs.Write(closeBracketBytes)
 
 	case reflect.String:
-		f.fs.Write([]byte(v.String()))
+		s := v.String()
+		if f.cs.QuoteStrings {
+			s = strconv.Quote(s)
+		}
+		f.fs.Write([]byte(s))
 
 	case reflect.Interface:
 		// The only time we should get here is for nil interfaces due to

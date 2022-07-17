@@ -118,27 +118,35 @@ func handleMethods(cs *ConfigState, w io.Writer, v reflect.Value) (handled bool)
 	switch iface := v.Interface().(type) {
 	case error:
 		defer catchPanic(w, v)
+		s := iface.Error()
+		if cs.QuoteStrings {
+			s = strconv.Quote(s)
+		}
 		if cs.ContinueOnMethod {
 			w.Write(openParenBytes)
-			w.Write([]byte(iface.Error()))
+			w.Write([]byte(s))
 			w.Write(closeParenBytes)
 			w.Write(spaceBytes)
 			return false
 		}
 
-		w.Write([]byte(iface.Error()))
+		w.Write([]byte(s))
 		return true
 
 	case fmt.Stringer:
 		defer catchPanic(w, v)
+		s := iface.String()
+		if cs.QuoteStrings {
+			s = strconv.Quote(s)
+		}
 		if cs.ContinueOnMethod {
 			w.Write(openParenBytes)
-			w.Write([]byte(iface.String()))
+			w.Write([]byte(s))
 			w.Write(closeParenBytes)
 			w.Write(spaceBytes)
 			return false
 		}
-		w.Write([]byte(iface.String()))
+		w.Write([]byte(s))
 		return true
 	}
 	return false
