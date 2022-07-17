@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -175,6 +177,9 @@ func initSpewTests() {
 		y int
 	}{123, 456}
 
+	// Variable for tests on anonymous functions.
+	tfn := func() {}
+
 	spewTests = []spewTest{
 		{line(), scsDefault, fCSFdump, "", int8(127), "(int8) 127\n"},
 		{line(), scsDefault, fCSFprint, "", int16(32767), "32767"},
@@ -253,7 +258,30 @@ func initSpewTests() {
 		{line(), scsClean, fCSSprintln, "", make([]string, 1, 10), "[\"\"]\n"},
 		{line(), scsClean, fCSSprintf, "%v", make([]string, 1, 10), `[""]`},
 		{line(), scsClean, fCSSprintf, "%#v", make([]string, 1, 10), `([]string)[""]`},
+		{line(), scsClean, fCSSdump, "", TestSpew,
+			fmt.Sprintf("spew_test.TestSpew[spew_test.go:%d]\n", funcLine(reflect.ValueOf(TestSpew).Pointer()))},
+		{line(), scsClean, fCSSprintln, "", TestSpew,
+			fmt.Sprintf("spew_test.TestSpew[spew_test.go:%d]\n", funcLine(reflect.ValueOf(TestSpew).Pointer()))},
+		{line(), scsClean, fCSSprintf, "%v", TestSpew,
+			fmt.Sprintf("spew_test.TestSpew[spew_test.go:%d]", funcLine(reflect.ValueOf(TestSpew).Pointer()))},
+		{line(), scsClean, fCSSprintf, "%#v", TestSpew,
+			fmt.Sprintf("(func(*testing.T))spew_test.TestSpew[spew_test.go:%d]", funcLine(reflect.ValueOf(TestSpew).Pointer()))},
+		{line(), scsClean, fCSSprintln, "", tfn,
+			fmt.Sprintf("spew_test.initSpewTests.func1[spew_test.go:%d]\n", funcLine(reflect.ValueOf(tfn).Pointer()))},
+		{line(), scsClean, fCSSprintf, "%v", tfn,
+			fmt.Sprintf("spew_test.initSpewTests.func1[spew_test.go:%d]", funcLine(reflect.ValueOf(tfn).Pointer()))},
+		{line(), scsClean, fCSSprintf, "%#v", tfn,
+			fmt.Sprintf("(func())spew_test.initSpewTests.func1[spew_test.go:%d]", funcLine(reflect.ValueOf(tfn).Pointer()))},
 	}
+}
+
+func funcLine(p uintptr) int {
+	fn := runtime.FuncForPC(p)
+	if fn == nil {
+		return -1
+	}
+	_, line := fn.FileLine(p)
+	return line
 }
 
 // TestSpew executes all of the tests described by spewTests.
