@@ -104,6 +104,10 @@ type ConfigState struct {
 	// structs in a shortened, one-line form ([] and {}).
 	AbbreviateEmpty bool
 
+	// FuncSymbols specifies whether to render func values as a symbol name
+	// plus file:line or just as pointers.
+	FuncSymbols bool
+
 	// ContinueOnMethod specifies whether or not recursion should continue once
 	// a custom error or Stringer interface is invoked.  The default, false,
 	// means it will print the results of invoking the custom error or Stringer
@@ -147,6 +151,7 @@ var CleanConfig = ConfigState{
 	Commas:                  true,
 	QuoteStrings:            true,
 	AbbreviateEmpty:         true,
+	FuncSymbols:             true,
 }
 
 // Errorf is a wrapper for fmt.Errorf that treats each argument as if it were

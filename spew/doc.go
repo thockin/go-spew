@@ -128,6 +128,10 @@ The following configuration options are available:
 		AbbreviateEmpty specifies whether to render empty lists, maps, and
 		structs in a shortened, one-line form ([] and {}).
 
+	* FuncSymbols
+		FuncSymbols specifies whether to render func values as a symbol name
+		plus file:line or just as pointers.
+
 	* ContinueOnMethod
 		Enables recursion into types after invoking error and Stringer interface
 		methods. Recursion after method invocation is disabled by default.
