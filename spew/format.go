@@ -19,7 +19,9 @@ package spew
 import (
 	"bytes"
 	"fmt"
+	"path/filepath"
 	"reflect"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -371,8 +373,25 @@ func (f *formatState) format(v reflect.Value) {
 	case reflect.Uintptr:
 		printHexPtr(f.fs, uintptr(v.Uint()))
 
-	case reflect.UnsafePointer, reflect.Chan, reflect.Func:
+	case reflect.UnsafePointer, reflect.Chan:
 		printHexPtr(f.fs, v.Pointer())
+
+	case reflect.Func:
+		if f.cs.FuncSymbols {
+			fn := runtime.FuncForPC(v.Pointer())
+			if fn != nil {
+				name := fn.Name()
+				file, line := fn.FileLine(v.Pointer())
+				f.fs.Write([]byte(filepath.Base(name)))
+				f.fs.Write([]byte("["))
+				f.fs.Write([]byte(filepath.Base(file)))
+				f.fs.Write([]byte(":"))
+				printInt(f.fs, int64(line), 10)
+				f.fs.Write([]byte("]"))
+			}
+		} else {
+			printHexPtr(f.fs, v.Pointer())
+		}
 
 	// There were not any other types at the time this code was written, but
 	// fall back to letting the default fmt package handle it if any get added.

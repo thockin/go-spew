@@ -22,8 +22,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -451,8 +453,25 @@ func (d *dumpState) dump(v reflect.Value) {
 	case reflect.Uintptr:
 		printHexPtr(d.w, uintptr(v.Uint()))
 
-	case reflect.UnsafePointer, reflect.Chan, reflect.Func:
+	case reflect.UnsafePointer, reflect.Chan:
 		printHexPtr(d.w, v.Pointer())
+
+	case reflect.Func:
+		if d.cs.FuncSymbols {
+			fn := runtime.FuncForPC(v.Pointer())
+			if fn != nil {
+				name := fn.Name()
+				file, line := fn.FileLine(v.Pointer())
+				d.w.Write([]byte(filepath.Base(name)))
+				d.w.Write([]byte("["))
+				d.w.Write([]byte(filepath.Base(file)))
+				d.w.Write([]byte(":"))
+				printInt(d.w, int64(line), 10)
+				d.w.Write([]byte("]"))
+			}
+		} else {
+			printHexPtr(d.w, v.Pointer())
+		}
 
 	// There were not any other types at the time this code was written, but
 	// fall back to letting the default fmt package handle it in case any new
