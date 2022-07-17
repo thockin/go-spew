@@ -116,6 +116,10 @@ The following configuration options are available:
 		DisableUnexported specifies whether to disable the unexported fields of
 		struct. This is useful for debugging APIs.
 
+	* DumpListSquareBraces
+		DumpListSquareBraces specifies whether to render lists with square
+		braces (JSON-style) or curly braces (Go-style) in dumps.
+
 	* ContinueOnMethod
 		Enables recursion into types after invoking error and Stringer interface
 		methods. Recursion after method invocation is disabled by default.
