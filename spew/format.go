@@ -272,7 +272,11 @@ func (f *formatState) format(v reflect.Value) {
 			numEntries := v.Len()
 			for i := 0; i < numEntries; i++ {
 				if i > 0 {
-					f.fs.Write(spaceBytes)
+					if f.cs.Commas {
+						f.fs.Write(commaBytes)
+					} else {
+						f.fs.Write(spaceBytes)
+					}
 				}
 				f.ignoreNextType = true
 				f.format(f.unpackValue(v.Index(i)))
@@ -317,7 +321,11 @@ func (f *formatState) format(v reflect.Value) {
 			}
 			for i, key := range keys {
 				if i > 0 {
-					f.fs.Write(spaceBytes)
+					if f.cs.Commas {
+						f.fs.Write(commaBytes)
+					} else {
+						f.fs.Write(spaceBytes)
+					}
 				}
 				f.ignoreNextType = true
 				f.format(f.unpackValue(key))
@@ -344,7 +352,11 @@ func (f *formatState) format(v reflect.Value) {
 					continue
 				}
 				if i > 0 {
-					f.fs.Write(spaceBytes)
+					if f.cs.Commas {
+						f.fs.Write(commaBytes)
+					} else {
+						f.fs.Write(spaceBytes)
+					}
 				}
 				if f.fs.Flag('+') || f.fs.Flag('#') {
 					f.fs.Write([]byte(vtf.Name))

@@ -107,6 +107,10 @@ The following configuration options are available:
 		DisableLengths specifies whether to disable the printing of lengths.
 		This also disables the printing of capacities.
 
+	* Commas
+		Commas specifies whether to use commas or spaces between elements of
+		lists, maps, and structs.
+
 	* TrailingCommas
 		TrailingCommas specifies whether to always include a
 		trailing comma, Go-style. This is useful to avoid false positives when

@@ -83,6 +83,10 @@ type ConfigState struct {
 	// This also disables the printing of capacities.
 	DisableLengths bool
 
+	// Commas specifies whether to use commas or spaces between elements of
+	// lists, maps, and structs.
+	Commas bool
+
 	// TrailingCommas specifies whether to always include a trailing comma,
 	// Go-style. This is useful to avoid false positives when diffing data
 	// structures in tests.
@@ -144,6 +148,7 @@ var CleanConfig = ConfigState{
 	DisableTypes:            true,
 	DisableLengths:          true,
 	DumpListSquareBraces:    true,
+	Commas:                  true,
 	QuoteStrings:            true,
 	AbbreviateEmpty:         true,
 }
