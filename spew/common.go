@@ -34,6 +34,7 @@ var (
 	trueBytes             = []byte("true")
 	falseBytes            = []byte("false")
 	interfaceBytes        = []byte("(interface {})")
+	commaBytes            = []byte(",")
 	commaNewlineBytes     = []byte(",\n")
 	newlineBytes          = []byte("\n")
 	openBraceBytes        = []byte("{")
