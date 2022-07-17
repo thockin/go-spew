@@ -1127,7 +1127,7 @@ func TestDumpUnexportedFields(t *testing.T) {
 		cs.Fdump(buf, test.in)
 		s := buf.String()
 		if testFailed(s, test.wants) {
-			t.Errorf("Dump #%d\n got: %s %s", i, s, stringizeWants(test.wants, "\n  or: %s"))
+			t.Errorf("Dump #%d\n got: %s\nwant: %s", i, s, stringizeWants(test.wants, "\n  or: %s"))
 			continue
 		}
 	}

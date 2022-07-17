@@ -120,6 +120,10 @@ The following configuration options are available:
 		DumpListSquareBraces specifies whether to render lists with square
 		braces (JSON-style) or curly braces (Go-style) in dumps.
 
+	* QuoteStrings
+		QuoteStrings specifies whether to render strings with quotes
+		(JSON-style) or not (Go-style) in Printf() family calls.
+
 	* AbbreviateEmpty
 		AbbreviateEmpty specifies whether to render empty lists, maps, and
 		structs in a shortened, one-line form ([] and {}).

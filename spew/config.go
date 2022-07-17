@@ -96,6 +96,10 @@ type ConfigState struct {
 	// braces (JSON-style) or curly braces (Go-style) in dumps.
 	DumpListSquareBraces bool
 
+	// QuoteStrings specifies whether to render strings with quotes
+	// (JSON-style) or not (Go-style) in Printf() family calls.
+	QuoteStrings bool
+
 	// AbbreviateEmpty specifies whether to render empty lists, maps, and
 	// structs in a shortened, one-line form ([] and {}).
 	AbbreviateEmpty bool
@@ -140,6 +144,7 @@ var CleanConfig = ConfigState{
 	DisableTypes:            true,
 	DisableLengths:          true,
 	DumpListSquareBraces:    true,
+	QuoteStrings:            true,
 	AbbreviateEmpty:         true,
 }
 
