@@ -39,6 +39,8 @@ var (
 	openBraceBytes        = []byte("{")
 	openBraceNewlineBytes = []byte("{\n")
 	closeBraceBytes       = []byte("}")
+	openListNewlineBytes  = []byte("[\n")
+	closeListBytes        = []byte("]")
 	asteriskBytes         = []byte("*")
 	colonBytes            = []byte(":")
 	colonSpaceBytes       = []byte(": ")

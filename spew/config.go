@@ -88,6 +88,10 @@ type ConfigState struct {
 	// structures in tests.
 	TrailingCommas bool
 
+	// DumpListSquareBraces specifies whether to render lists with square
+	// braces (JSON-style) or curly braces (Go-style) in dumps.
+	DumpListSquareBraces bool
+
 	// ContinueOnMethod specifies whether or not recursion should continue once
 	// a custom error or Stringer interface is invoked.  The default, false,
 	// means it will print the results of invoking the custom error or Stringer
@@ -127,6 +131,7 @@ var CleanConfig = ConfigState{
 	DisablePointerMethods:   true,
 	DisableTypes:            true,
 	DisableLengths:          true,
+	DumpListSquareBraces:    true,
 }
 
 // Errorf is a wrapper for fmt.Errorf that treats each argument as if it were

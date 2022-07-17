@@ -343,7 +343,12 @@ func (d *dumpState) dump(v reflect.Value) {
 		fallthrough
 
 	case reflect.Array:
-		d.w.Write(openBraceNewlineBytes)
+		if d.cs.DumpListSquareBraces {
+			d.w.Write(openListNewlineBytes)
+		} else {
+			d.w.Write(openBraceNewlineBytes)
+		}
+
 		d.depth++
 		if (d.cs.MaxDepth != 0) && (d.depth > d.cs.MaxDepth) {
 			d.indent()
@@ -353,7 +358,11 @@ func (d *dumpState) dump(v reflect.Value) {
 		}
 		d.depth--
 		d.indent()
-		d.w.Write(closeBraceBytes)
+		if d.cs.DumpListSquareBraces {
+			d.w.Write(closeListBytes)
+		} else {
+			d.w.Write(closeBraceBytes)
+		}
 
 	case reflect.String:
 		d.w.Write([]byte(strconv.Quote(v.String())))
