@@ -136,6 +136,7 @@ func initSpewTests() {
 	scsNoCap := &spew.ConfigState{DisableCapacities: true}
 	scsTrailingComma := &spew.ConfigState{Indent: " ", TrailingCommas: true}
 	scsNoUnexported := &spew.ConfigState{Indent: " ", DisableUnexported: true}
+	scsQuotes := &spew.ConfigState{QuoteStrings: true}
 	scsClean := &spew.CleanConfig
 
 	// Variables for tests on types which implement Stringer interface with and
@@ -240,11 +241,18 @@ func initSpewTests() {
 		{line(), scsNoUnexported, fCSSprintln, "", tunexp, "{123}\n"},
 		{line(), scsNoUnexported, fCSSprintf, "%v", tunexp, "{123}"},
 		{line(), scsNoUnexported, fCSSprintf, "%#v", tunexp, "(struct { X int; y int }){X:(int)123}"},
+		{line(), scsQuotes, fCSSdump, "", ts, "(spew_test.stringer) (len=4) \"stringer test\"\n"},
+		{line(), scsQuotes, fCSSprintln, "", ts, "\"stringer test\"\n"},
+		{line(), scsQuotes, fCSSprintf, "%v", ts, `"stringer test"`},
+		{line(), scsQuotes, fCSSprintf, "%#v", ts, `(spew_test.stringer)"stringer test"`},
 		{line(), scsClean, fCSSdump, "", make([]string, 0, 10), "[]\n"},
 		{line(), scsClean, fCSSdump, "", make([]string, 1, 10), "[\n  \"\"\n]\n"},
 		{line(), scsClean, fCSSprintln, "", make([]int, 1, 10), "[0]\n"},
 		{line(), scsClean, fCSSprintf, "%v", make([]int, 1, 10), "[0]"},
 		{line(), scsClean, fCSSprintf, "%#v", make([]int, 1, 10), "([]int)[0]"},
+		{line(), scsClean, fCSSprintln, "", make([]string, 1, 10), "[\"\"]\n"},
+		{line(), scsClean, fCSSprintf, "%v", make([]string, 1, 10), `[""]`},
+		{line(), scsClean, fCSSprintf, "%#v", make([]string, 1, 10), `([]string)[""]`},
 	}
 }
 
