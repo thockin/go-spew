@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/thockin/go-spew/spew"
@@ -127,6 +128,78 @@ func line() string {
 		s = "<??>"
 	}
 	return s
+}
+
+func typeNameOf(in interface{}) (v interface{}, typ string) {
+	var b strings.Builder
+
+	// Using reflect package it seems impossible to
+	// get a reflect.ValueOf of type "interface {}",
+	// so use ifaceVal as a sentinel value to signal
+	// in is an interface{} and use as special case
+	// to handle this situation.
+	if ifv, ok := in.(ifaceVal); ok {
+		v = ifv.v
+		rv := reflect.ValueOf(v)
+
+		// count and dereference any pointers
+		indir := 0
+		for rv.Kind() == reflect.Pointer {
+			rv = rv.Elem()
+			indir++
+		}
+
+		b.WriteString("interface {}(")
+		if rv.IsValid() {
+			for i := 0; i < indir; i++ {
+				b.WriteByte('*')
+			}
+
+			// get type boxed in the interface
+			if rv.Kind() == reflect.Interface {
+				rv = rv.Elem()
+			}
+
+			if rv.IsValid() {
+				b.WriteString(rv.Type().String())
+			} else {
+				b.WriteString("interface {}(nil)")
+			}
+		} else {
+			b.WriteString("nil")
+		}
+		b.WriteByte(')')
+
+	} else {
+		v = in
+		rv := reflect.ValueOf(v)
+
+		if !rv.IsValid() {
+			b.WriteString("nil")
+		} else {
+			// record type of v before derefencing
+			ptyp := rv.Type().String()
+			for rv.Kind() == reflect.Pointer {
+				rv = rv.Elem()
+			}
+
+			// handle typed nil separately
+			if rv.Kind() == reflect.Invalid {
+				b.WriteString("nil(")
+				b.WriteString(ptyp)
+				b.WriteByte(')')
+			} else {
+				b.WriteString(ptyp)
+			}
+		}
+	}
+
+	typ = b.String()
+	return v, typ
+}
+
+type ifaceVal struct {
+	v interface{}
 }
 
 type sortableStruct struct {

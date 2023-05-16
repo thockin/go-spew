@@ -65,6 +65,7 @@ package spew_test
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"testing"
 	"unsafe"
 
@@ -73,17 +74,41 @@ import (
 
 // dumpTest is used to describe a test to be performed against the Dump method.
 type dumpTest struct {
+	typ   string
 	in    interface{}
 	wants []string
 }
 
 // dumpTests houses all of the tests to be performed against the Dump method.
-var dumpTests = make([]dumpTest, 0)
+var dumpTests []dumpTest
+
+func init() {
+	addIntDumpTests()
+	addUintDumpTests()
+	addBoolDumpTests()
+	addFloatDumpTests()
+	addComplexDumpTests()
+	addArrayDumpTests()
+	addSliceDumpTests()
+	addStringDumpTests()
+	addInterfaceDumpTests()
+	addMapDumpTests()
+	addStructDumpTests()
+	addUintptrDumpTests()
+	addUnsafePointerDumpTests()
+	addChanDumpTests()
+	addFuncDumpTests()
+	addCircularDumpTests()
+	addPanicDumpTests()
+	addErrorDumpTests()
+	addCgoDumpTests()
+}
 
 // addDumpTest is a helper method to append the passed input and desired result
 // to dumpTests
 func addDumpTest(in interface{}, wants ...string) {
-	test := dumpTest{in, wants}
+	in, typ := typeNameOf(in)
+	test := dumpTest{typ, in, wants}
 	dumpTests = append(dumpTests, test)
 }
 
@@ -531,10 +556,10 @@ func addInterfaceDumpTests() {
 	pvAddr := fmt.Sprintf("%p", &pv)
 	vt := "interface {}"
 	vs := "<nil>"
-	addDumpTest(v, "("+vt+") "+vs+"\n")
-	addDumpTest(pv, "(*"+vt+")("+vAddr+")("+vs+")\n")
-	addDumpTest(&pv, "(**"+vt+")("+pvAddr+"->"+vAddr+")("+vs+")\n")
-	addDumpTest(nv, "(*"+vt+")(<nil>)\n")
+	addDumpTest(ifaceVal{v}, "("+vt+") "+vs+"\n")
+	addDumpTest(ifaceVal{pv}, "(*"+vt+")("+vAddr+")("+vs+")\n")
+	addDumpTest(ifaceVal{&pv}, "(**"+vt+")("+pvAddr+"->"+vAddr+")("+vs+")\n")
+	addDumpTest(ifaceVal{nv}, "(*"+vt+")(<nil>)\n")
 
 	// Sub-interface.
 	v2 := interface{}(uint16(65535))
@@ -543,9 +568,9 @@ func addInterfaceDumpTests() {
 	pv2Addr := fmt.Sprintf("%p", &pv2)
 	v2t := "uint16"
 	v2s := "65535"
-	addDumpTest(v2, "("+v2t+") "+v2s+"\n")
-	addDumpTest(pv2, "(*"+v2t+")("+v2Addr+")("+v2s+")\n")
-	addDumpTest(&pv2, "(**"+v2t+")("+pv2Addr+"->"+v2Addr+")("+v2s+")\n")
+	addDumpTest(ifaceVal{v2}, "("+v2t+") "+v2s+"\n")
+	addDumpTest(ifaceVal{pv2}, "(*"+v2t+")("+v2Addr+")("+v2s+")\n")
+	addDumpTest(ifaceVal{&pv2}, "(**"+v2t+")("+pv2Addr+"->"+v2Addr+")("+v2s+")\n")
 }
 
 func addMapDumpTests() {
@@ -959,36 +984,29 @@ func addErrorDumpTests() {
 
 // TestDump executes all of the tests described by dumpTests.
 func TestDump(t *testing.T) {
-	// Setup tests.
-	addIntDumpTests()
-	addUintDumpTests()
-	addBoolDumpTests()
-	addFloatDumpTests()
-	addComplexDumpTests()
-	addArrayDumpTests()
-	addSliceDumpTests()
-	addStringDumpTests()
-	addInterfaceDumpTests()
-	addMapDumpTests()
-	addStructDumpTests()
-	addUintptrDumpTests()
-	addUnsafePointerDumpTests()
-	addChanDumpTests()
-	addFuncDumpTests()
-	addCircularDumpTests()
-	addPanicDumpTests()
-	addErrorDumpTests()
-	addCgoDumpTests()
-
 	t.Logf("Running %d tests", len(dumpTests))
+	buf := new(bytes.Buffer)
 	for i, test := range dumpTests {
-		buf := new(bytes.Buffer)
-		spew.Fdump(buf, test.in)
-		s := buf.String()
-		if testFailed(s, test.wants) {
-			t.Errorf("Dump #%d\n got: %s\nwant: %s", i, s, stringizeWants(test.wants, "\n  or: %s"))
-			continue
-		}
+		t.Run(test.typ, func(t *testing.T) {
+			t.Cleanup(buf.Reset)
+			spew.Fdump(buf, test.in)
+			s := buf.String()
+			if testFailed(s, test.wants) {
+				t.Errorf("Dump #%d\n got: %s\nwant: %s", i, s, stringizeWants(test.wants, "\n  or: %s"))
+			}
+		})
+	}
+}
+
+func BenchmarkDump(b *testing.B) {
+	for _, test := range dumpTests {
+		b.Run(test.typ, func(b *testing.B) {
+			b.ReportAllocs()
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				spew.Fdump(io.Discard, test.in)
+			}
+		})
 	}
 }
 
