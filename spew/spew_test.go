@@ -19,7 +19,6 @@ package spew_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"runtime"
@@ -111,7 +110,7 @@ var spewTests []spewTest
 // redirStdout is a helper function to return the standard output from f as a
 // byte slice.
 func redirStdout(f func()) ([]byte, error) {
-	tempFile, err := ioutil.TempFile("", "ss-test")
+	tempFile, err := os.CreateTemp("", "ss-test")
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +123,7 @@ func redirStdout(f func()) ([]byte, error) {
 	os.Stdout = origStdout
 	tempFile.Close()
 
-	return ioutil.ReadFile(fileName)
+	return os.ReadFile(fileName)
 }
 
 func initSpewTests() {
