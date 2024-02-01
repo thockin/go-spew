@@ -23,18 +23,18 @@ import (
 	"os"
 )
 
-// ConfigState houses the configuration options used by spew to format and
+// Config houses the configuration options used by spew to format and
 // display values.  There is a global instance, Default, that is used to control
-// all top-level Formatter and Dump functionality.  Each ConfigState instance
+// all top-level Formatter and Dump functionality.  Each Config instance
 // provides methods equivalent to the top-level functions.
 //
-// The zero value for ConfigState provides no indentation.  You would typically
+// The zero value for Config provides no indentation.  You would typically
 // want to set it to a space or a tab.
 //
-// Alternatively, you can use NewDefaultConfig to get a ConfigState instance
+// Alternatively, you can use NewDefaultConfig to get a Config instance
 // with default settings.  See the documentation of NewDefaultConfig for default
 // values.
-type ConfigState struct {
+type Config struct {
 	// Indent specifies the string to use for each indentation level.  The
 	// global config instance that all top-level functions use set this to a
 	// single space by default.  If you would like more indentation, you might
@@ -137,12 +137,12 @@ type ConfigState struct {
 }
 
 // Default holds the configuration of the top-level functions.
-var Default = ConfigState{Indent: " "}
+var Default = Config{Indent: " "}
 
-// CleanConfig is a pre-built ConfigState which offers the "best" configuration
+// CleanConfig is a pre-built Config which offers the "best" configuration
 // for clean, simple output.  In other words, most of the decorations are
 // disabled.
-var CleanConfig = ConfigState{
+var CleanConfig = Config{
 	Indent:                  "  ",
 	DisableMethods:          true,
 	DisablePointerAddresses: true,
@@ -165,7 +165,7 @@ var CleanConfig = ConfigState{
 // This function is shorthand for the following syntax:
 //
 //	fmt.Errorf(format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Errorf(format string, a ...interface{}) (err error) {
+func (c *Config) Errorf(format string, a ...interface{}) (err error) {
 	return fmt.Errorf(format, c.convertArgs(a)...)
 }
 
@@ -177,7 +177,7 @@ func (c *ConfigState) Errorf(format string, a ...interface{}) (err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Fprint(w, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
+func (c *Config) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
 	return fmt.Fprint(w, c.convertArgs(a)...)
 }
 
@@ -189,7 +189,7 @@ func (c *ConfigState) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Fprintf(w, format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Fprintf(w io.Writer, format string, a ...interface{}) (n int, err error) {
+func (c *Config) Fprintf(w io.Writer, format string, a ...interface{}) (n int, err error) {
 	return fmt.Fprintf(w, format, c.convertArgs(a)...)
 }
 
@@ -200,7 +200,7 @@ func (c *ConfigState) Fprintf(w io.Writer, format string, a ...interface{}) (n i
 // This function is shorthand for the following syntax:
 //
 //	fmt.Fprintln(w, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Fprintln(w io.Writer, a ...interface{}) (n int, err error) {
+func (c *Config) Fprintln(w io.Writer, a ...interface{}) (n int, err error) {
 	return fmt.Fprintln(w, c.convertArgs(a)...)
 }
 
@@ -212,7 +212,7 @@ func (c *ConfigState) Fprintln(w io.Writer, a ...interface{}) (n int, err error)
 // This function is shorthand for the following syntax:
 //
 //	fmt.Print(c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Print(a ...interface{}) (n int, err error) {
+func (c *Config) Print(a ...interface{}) (n int, err error) {
 	return fmt.Print(c.convertArgs(a)...)
 }
 
@@ -224,7 +224,7 @@ func (c *ConfigState) Print(a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Printf(format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Printf(format string, a ...interface{}) (n int, err error) {
+func (c *Config) Printf(format string, a ...interface{}) (n int, err error) {
 	return fmt.Printf(format, c.convertArgs(a)...)
 }
 
@@ -236,7 +236,7 @@ func (c *ConfigState) Printf(format string, a ...interface{}) (n int, err error)
 // This function is shorthand for the following syntax:
 //
 //	fmt.Println(c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Println(a ...interface{}) (n int, err error) {
+func (c *Config) Println(a ...interface{}) (n int, err error) {
 	return fmt.Println(c.convertArgs(a)...)
 }
 
@@ -247,7 +247,7 @@ func (c *ConfigState) Println(a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Sprint(c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Sprint(a ...interface{}) string {
+func (c *Config) Sprint(a ...interface{}) string {
 	return fmt.Sprint(c.convertArgs(a)...)
 }
 
@@ -258,7 +258,7 @@ func (c *ConfigState) Sprint(a ...interface{}) string {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Sprintf(format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Sprintf(format string, a ...interface{}) string {
+func (c *Config) Sprintf(format string, a ...interface{}) string {
 	return fmt.Sprintf(format, c.convertArgs(a)...)
 }
 
@@ -269,7 +269,7 @@ func (c *ConfigState) Sprintf(format string, a ...interface{}) string {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Sprintln(c.NewFormatter(a), c.NewFormatter(b))
-func (c *ConfigState) Sprintln(a ...interface{}) string {
+func (c *Config) Sprintln(a ...interface{}) string {
 	return fmt.Sprintln(c.convertArgs(a)...)
 }
 
@@ -290,13 +290,13 @@ Typically this function shouldn't be called directly.  It is much easier to make
 use of the custom formatter by calling one of the convenience functions such as
 c.Printf, c.Println, or c.Printf.
 */
-func (c *ConfigState) NewFormatter(v interface{}) fmt.Formatter {
+func (c *Config) NewFormatter(v interface{}) fmt.Formatter {
 	return newFormatter(c, v)
 }
 
 // Fdump formats and displays the passed arguments to io.Writer w.  It formats
 // exactly the same as Dump.
-func (c *ConfigState) Fdump(w io.Writer, a ...interface{}) {
+func (c *Config) Fdump(w io.Writer, a ...interface{}) {
 	fdump(c, w, a...)
 }
 
@@ -318,18 +318,18 @@ package:
     includes offsets, byte values in hex, and ASCII output
 
 The configuration options are controlled by modifying the public members
-of c.  See ConfigState for options documentation.
+of c.  See Config for options documentation.
 
 See Fdump if you would prefer dumping to an arbitrary io.Writer or Sdump to
 get the formatted result as a string.
 */
-func (c *ConfigState) Dump(a ...interface{}) {
+func (c *Config) Dump(a ...interface{}) {
 	fdump(c, os.Stdout, a...)
 }
 
 // Sdump returns a string with the passed arguments formatted exactly the same
 // as Dump.
-func (c *ConfigState) Sdump(a ...interface{}) string {
+func (c *Config) Sdump(a ...interface{}) string {
 	var buf bytes.Buffer
 	fdump(c, &buf, a...)
 	return buf.String()
@@ -337,8 +337,8 @@ func (c *ConfigState) Sdump(a ...interface{}) string {
 
 // convertArgs accepts a slice of arguments and returns a slice of the same
 // length with each argument converted to a spew Formatter interface using
-// the ConfigState associated with s.
-func (c *ConfigState) convertArgs(args []interface{}) (formatters []interface{}) {
+// the Config associated with s.
+func (c *Config) convertArgs(args []interface{}) (formatters []interface{}) {
 	formatters = make([]interface{}, len(args))
 	for index, arg := range args {
 		formatters[index] = newFormatter(c, arg)
@@ -346,7 +346,7 @@ func (c *ConfigState) convertArgs(args []interface{}) (formatters []interface{})
 	return formatters
 }
 
-// NewDefaultConfig returns a ConfigState with the following default settings.
+// NewDefaultConfig returns a Config with the following default settings.
 //
 //	Indent: " "
 //	MaxDepth: 0
@@ -354,6 +354,6 @@ func (c *ConfigState) convertArgs(args []interface{}) (formatters []interface{})
 //	DisablePointerMethods: false
 //	ContinueOnMethod: false
 //	SortKeys: false
-func NewDefaultConfig() *ConfigState {
-	return &ConfigState{Indent: " "}
+func NewDefaultConfig() *Config {
+	return &Config{Indent: " "}
 }

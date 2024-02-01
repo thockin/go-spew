@@ -87,7 +87,7 @@ func catchPanic(w io.Writer, v reflect.Value) {
 //
 // It handles panics in any called methods by catching and displaying the error
 // as the formatted value.
-func handleMethods(cs *ConfigState, w io.Writer, v reflect.Value) (handled bool) {
+func handleMethods(cfg *Config, w io.Writer, v reflect.Value) (handled bool) {
 	// We need an interface to check if the type implements the error or
 	// Stringer interface.  However, the reflect package won't give us an
 	// interface on certain things like unexported struct fields in order
@@ -108,7 +108,7 @@ func handleMethods(cs *ConfigState, w io.Writer, v reflect.Value) (handled bool)
 	// mutate the value, however, types which choose to satisfy an error or
 	// Stringer interface with a pointer receiver should not be mutating their
 	// state inside these interface methods.
-	if !cs.DisablePointerMethods && !UnsafeDisabled && !v.CanAddr() {
+	if !cfg.DisablePointerMethods && !UnsafeDisabled && !v.CanAddr() {
 		v = unsafeReflectValue(v)
 	}
 	if v.CanAddr() {
@@ -120,10 +120,10 @@ func handleMethods(cs *ConfigState, w io.Writer, v reflect.Value) (handled bool)
 	case error:
 		defer catchPanic(w, v)
 		s := iface.Error()
-		if cs.QuoteStrings {
+		if cfg.QuoteStrings {
 			s = strconv.Quote(s)
 		}
-		if cs.ContinueOnMethod {
+		if cfg.ContinueOnMethod {
 			w.Write(openParenBytes)
 			w.Write([]byte(s))
 			w.Write(closeParenBytes)
@@ -137,10 +137,10 @@ func handleMethods(cs *ConfigState, w io.Writer, v reflect.Value) (handled bool)
 	case fmt.Stringer:
 		defer catchPanic(w, v)
 		s := iface.String()
-		if cs.QuoteStrings {
+		if cfg.QuoteStrings {
 			s = strconv.Quote(s)
 		}
-		if cs.ContinueOnMethod {
+		if cfg.ContinueOnMethod {
 			w.Write(openParenBytes)
 			w.Write([]byte(s))
 			w.Write(closeParenBytes)
@@ -232,29 +232,29 @@ func printHexPtr(w io.Writer, p uintptr) {
 type valuesSorter struct {
 	values  []reflect.Value
 	strings []string // either nil or same len and values
-	cs      *ConfigState
+	cfg     *Config
 }
 
 // newValuesSorter initializes a valuesSorter instance, which holds a set of
 // surrogate keys on which the data should be sorted.  It uses flags in
-// ConfigState to decide if and how to populate those surrogate keys.
-func newValuesSorter(values []reflect.Value, cs *ConfigState) sort.Interface {
-	vs := &valuesSorter{values: values, cs: cs}
+// Config to decide if and how to populate those surrogate keys.
+func newValuesSorter(values []reflect.Value, cfg *Config) sort.Interface {
+	vs := &valuesSorter{values: values, cfg: cfg}
 	if canSortSimply(vs.values[0].Kind()) {
 		return vs
 	}
-	if !cs.DisableMethods {
+	if !cfg.DisableMethods {
 		vs.strings = make([]string, len(values))
 		for i := range vs.values {
 			b := bytes.Buffer{}
-			if !handleMethods(cs, &b, vs.values[i]) {
+			if !handleMethods(cfg, &b, vs.values[i]) {
 				vs.strings = nil
 				break
 			}
 			vs.strings[i] = b.String()
 		}
 	}
-	if vs.strings == nil && cs.SpewKeys {
+	if vs.strings == nil && cfg.SpewKeys {
 		vs.strings = make([]string, len(values))
 		for i := range vs.values {
 			vs.strings[i] = Sprintf("%#v", vs.values[i].Interface())
@@ -265,7 +265,7 @@ func newValuesSorter(values []reflect.Value, cs *ConfigState) sort.Interface {
 
 // canSortSimply tests whether a reflect.Kind is a primitive that can be sorted
 // directly, or whether it should be considered for sorting by surrogate keys
-// (if the ConfigState allows it).
+// (if the Config allows it).
 func canSortSimply(kind reflect.Kind) bool {
 	// This switch parallels valueLessEqual, except for the default case.
 	switch kind {
@@ -358,9 +358,9 @@ func (s *valuesSorter) Less(i, j int) bool {
 // sortValues is a sort function that handles both native types and any type that
 // can be converted to error or Stringer.  Other inputs are sorted according to
 // their Value.String() value to ensure display stability.
-func sortValues(values []reflect.Value, cs *ConfigState) {
+func sortValues(values []reflect.Value, cfg *Config) {
 	if len(values) == 0 {
 		return
 	}
-	sort.Sort(newValuesSorter(values, cs))
+	sort.Sort(newValuesSorter(values, cfg))
 }

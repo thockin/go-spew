@@ -57,7 +57,7 @@ func TestInvalidReflectValue(t *testing.T) {
 	// Dump invalid reflect value.
 	v := new(reflect.Value)
 	buf := new(bytes.Buffer)
-	d := dumpState{w: buf, cs: &Default}
+	d := dumpState{w: buf, cfg: &Default}
 	d.dump(*v)
 	s := buf.String()
 	want := "<invalid>"
@@ -68,7 +68,7 @@ func TestInvalidReflectValue(t *testing.T) {
 
 	// Formatter invalid reflect value.
 	buf2 := new(dummyFmtState)
-	f := formatState{value: *v, cs: &Default, fs: buf2}
+	f := formatState{value: *v, cfg: &Default, fs: buf2}
 	f.format(*v)
 	s = buf2.String()
 	want = "<invalid>"
@@ -79,6 +79,6 @@ func TestInvalidReflectValue(t *testing.T) {
 
 // SortValues makes the internal sortValues function available to the test
 // package.
-func SortValues(values []reflect.Value, cs *ConfigState) {
-	sortValues(values, cs)
+func SortValues(values []reflect.Value, cfg *Config) {
+	sortValues(values, cfg)
 }

@@ -56,17 +56,17 @@ type dumpState struct {
 	pointers         map[uintptr]int
 	ignoreNextType   bool
 	ignoreNextIndent bool
-	cs               *ConfigState
+	cfg              *Config
 }
 
-// indent performs indentation according to the depth level and cs.Indent
+// indent performs indentation according to the depth level and cfg.Indent
 // option.
 func (d *dumpState) indent() {
 	if d.ignoreNextIndent {
 		d.ignoreNextIndent = false
 		return
 	}
-	d.w.Write(bytes.Repeat([]byte(d.cs.Indent), d.depth))
+	d.w.Write(bytes.Repeat([]byte(d.cfg.Indent), d.depth))
 }
 
 // unpackValue returns values inside of non-nil interfaces when possible.
@@ -131,7 +131,7 @@ func (d *dumpState) dumpPtr(v reflect.Value) {
 	d.w.Write(closeParenBytes)
 
 	// Display pointer information.
-	if !d.cs.DisablePointerAddresses && len(pointerChain) > 0 {
+	if !d.cfg.DisablePointerAddresses && len(pointerChain) > 0 {
 		d.w.Write(openParenBytes)
 		for i, addr := range pointerChain {
 			if i > 0 {
@@ -227,10 +227,10 @@ func (d *dumpState) dumpSlice(v reflect.Value) {
 
 	// Hexdump the entire slice as needed.
 	if doHexDump {
-		indent := strings.Repeat(d.cs.Indent, d.depth)
+		indent := strings.Repeat(d.cfg.Indent, d.depth)
 		str := indent + hex.Dump(buf)
 		str = strings.ReplaceAll(str, "\n", "\n"+indent)
-		str = strings.TrimRight(str, d.cs.Indent)
+		str = strings.TrimRight(str, d.cfg.Indent)
 		d.w.Write([]byte(str))
 		return
 	}
@@ -264,7 +264,7 @@ func (d *dumpState) dump(v reflect.Value) {
 	// Print type information unless already handled elsewhere.
 	if !d.ignoreNextType {
 		d.indent()
-		if !d.cs.DisableTypes {
+		if !d.cfg.DisableTypes {
 			d.w.Write(openParenBytes)
 			d.w.Write([]byte(v.Type().String()))
 			d.w.Write(closeParenBytes)
@@ -275,7 +275,7 @@ func (d *dumpState) dump(v reflect.Value) {
 
 	// Display length and capacity if the built-in len and cap functions
 	// work with the value's kind and the len/cap itself is non-zero.
-	if !d.cs.DisableLengths {
+	if !d.cfg.DisableLengths {
 		valueLen, valueCap := 0, 0
 		switch v.Kind() {
 		case reflect.Array, reflect.Slice, reflect.Chan:
@@ -283,13 +283,13 @@ func (d *dumpState) dump(v reflect.Value) {
 		case reflect.Map, reflect.String:
 			valueLen = v.Len()
 		}
-		if valueLen != 0 || !d.cs.DisableCapacities && valueCap != 0 {
+		if valueLen != 0 || !d.cfg.DisableCapacities && valueCap != 0 {
 			d.w.Write(openParenBytes)
 			if valueLen != 0 {
 				d.w.Write(lenEqualsBytes)
 				printInt(d.w, int64(valueLen), 10)
 			}
-			if !d.cs.DisableCapacities && valueCap != 0 {
+			if !d.cfg.DisableCapacities && valueCap != 0 {
 				if valueLen != 0 {
 					d.w.Write(spaceBytes)
 				}
@@ -303,9 +303,9 @@ func (d *dumpState) dump(v reflect.Value) {
 
 	// Call Stringer/error interfaces if they exist and the handle methods flag
 	// is enabled
-	if !d.cs.DisableMethods {
+	if !d.cfg.DisableMethods {
 		if (kind != reflect.Invalid) && (kind != reflect.Interface) {
-			if handled := handleMethods(d.cs, d.w, v); handled {
+			if handled := handleMethods(d.cfg, d.w, v); handled {
 				return
 			}
 		}
@@ -342,7 +342,7 @@ func (d *dumpState) dump(v reflect.Value) {
 			d.w.Write(nilAngleBytes)
 			break
 		}
-		if v.Len() == 0 && d.cs.AbbreviateEmpty {
+		if v.Len() == 0 && d.cfg.AbbreviateEmpty {
 			d.w.Write(emptyListBytes)
 			break
 		}
@@ -350,14 +350,14 @@ func (d *dumpState) dump(v reflect.Value) {
 		fallthrough
 
 	case reflect.Array:
-		if d.cs.DumpListSquareBraces {
+		if d.cfg.DumpListSquareBraces {
 			d.w.Write(openListNewlineBytes)
 		} else {
 			d.w.Write(openBraceNewlineBytes)
 		}
 
 		d.depth++
-		if (d.cs.MaxDepth != 0) && (d.depth > d.cs.MaxDepth) {
+		if (d.cfg.MaxDepth != 0) && (d.depth > d.cfg.MaxDepth) {
 			d.indent()
 			d.w.Write(maxNewlineBytes)
 		} else {
@@ -365,7 +365,7 @@ func (d *dumpState) dump(v reflect.Value) {
 		}
 		d.depth--
 		d.indent()
-		if d.cs.DumpListSquareBraces {
+		if d.cfg.DumpListSquareBraces {
 			d.w.Write(closeListBytes)
 		} else {
 			d.w.Write(closeBraceBytes)
@@ -391,21 +391,21 @@ func (d *dumpState) dump(v reflect.Value) {
 			d.w.Write(nilAngleBytes)
 			break
 		}
-		if v.Len() == 0 && d.cs.AbbreviateEmpty {
+		if v.Len() == 0 && d.cfg.AbbreviateEmpty {
 			d.w.Write(emptyBracesBytes)
 			break
 		}
 
 		d.w.Write(openBraceNewlineBytes)
 		d.depth++
-		if (d.cs.MaxDepth != 0) && (d.depth > d.cs.MaxDepth) {
+		if (d.cfg.MaxDepth != 0) && (d.depth > d.cfg.MaxDepth) {
 			d.indent()
 			d.w.Write(maxNewlineBytes)
 		} else {
 			numEntries := v.Len()
 			keys := v.MapKeys()
-			if d.cs.SortKeys {
-				sortValues(keys, d.cs)
+			if d.cfg.SortKeys {
+				sortValues(keys, d.cfg)
 			}
 			for i, key := range keys {
 				d.dump(d.unpackValue(key))
@@ -420,13 +420,13 @@ func (d *dumpState) dump(v reflect.Value) {
 		d.w.Write(closeBraceBytes)
 
 	case reflect.Struct:
-		if v.NumField() == 0 && d.cs.AbbreviateEmpty {
+		if v.NumField() == 0 && d.cfg.AbbreviateEmpty {
 			d.w.Write(emptyBracesBytes)
 			break
 		}
 		d.w.Write(openBraceNewlineBytes)
 		d.depth++
-		if (d.cs.MaxDepth != 0) && (d.depth > d.cs.MaxDepth) {
+		if (d.cfg.MaxDepth != 0) && (d.depth > d.cfg.MaxDepth) {
 			d.indent()
 			d.w.Write(maxNewlineBytes)
 		} else {
@@ -435,7 +435,7 @@ func (d *dumpState) dump(v reflect.Value) {
 			for i := 0; i < numFields; i++ {
 				vtf := vt.Field(i)
 				// StructField has an IsExported() method, but only in 1.17+.
-				if d.cs.DisableUnexported && vtf.PkgPath != "" {
+				if d.cfg.DisableUnexported && vtf.PkgPath != "" {
 					continue
 				}
 				d.indent()
@@ -457,7 +457,7 @@ func (d *dumpState) dump(v reflect.Value) {
 		printHexPtr(d.w, v.Pointer())
 
 	case reflect.Func:
-		if d.cs.FuncSymbols {
+		if d.cfg.FuncSymbols {
 			fn := runtime.FuncForPC(v.Pointer())
 			if fn != nil {
 				name := fn.Name()
@@ -488,7 +488,7 @@ func (d *dumpState) dump(v reflect.Value) {
 // writeComma emits a comma if hasMoreElements is true, or if trailing commas
 // are always enabled.
 func (d *dumpState) writeComma(hasMoreElements bool) {
-	if hasMoreElements || d.cs.TrailingCommas {
+	if hasMoreElements || d.cfg.TrailingCommas {
 		d.w.Write(commaNewlineBytes)
 	} else {
 		d.w.Write(newlineBytes)
@@ -497,7 +497,7 @@ func (d *dumpState) writeComma(hasMoreElements bool) {
 
 // fdump is a helper function to consolidate the logic from the various public
 // methods which take varying writers and config states.
-func fdump(cs *ConfigState, w io.Writer, a ...interface{}) {
+func fdump(cfg *Config, w io.Writer, a ...interface{}) {
 	for _, arg := range a {
 		if arg == nil {
 			w.Write(interfaceBytes)
@@ -507,7 +507,7 @@ func fdump(cs *ConfigState, w io.Writer, a ...interface{}) {
 			continue
 		}
 
-		d := dumpState{w: w, cs: cs}
+		d := dumpState{w: w, cfg: cfg}
 		d.pointers = make(map[uintptr]int)
 		d.dump(reflect.ValueOf(arg))
 		d.w.Write(newlineBytes)
@@ -546,7 +546,7 @@ package:
     includes offsets, byte values in hex, and ASCII output
 
 The configuration options are controlled by an exported package global,
-spew.Default.  See ConfigState for options documentation.
+spew.Default.  See Config for options documentation.
 
 See Fdump if you would prefer dumping to an arbitrary io.Writer or Sdump to
 get the formatted result as a string.

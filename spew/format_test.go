@@ -1515,7 +1515,7 @@ func (ts *testStructP) String() string {
 }
 
 func TestPrintSortedKeys(t *testing.T) {
-	cfg := spew.ConfigState{SortKeys: true}
+	cfg := spew.Config{SortKeys: true}
 	s := cfg.Sprint(map[int]string{1: "1", 3: "3", 2: "2"})
 	expected := "map[1:1 2:2 3:3]"
 	if s != expected {

@@ -29,7 +29,7 @@ import (
 )
 
 // spewFunc is used to identify which public function of the spew package or
-// ConfigState a test applies to.
+// Config a test applies to.
 type spewFunc int
 
 const (
@@ -58,18 +58,18 @@ const (
 
 // Map of spewFunc values to names for pretty printing.
 var spewFuncStrings = map[spewFunc]string{
-	fnConfigFdump:        "ConfigState.Fdump",
-	fnConfigFprint:       "ConfigState.Fprint",
-	fnConfigFprintf:      "ConfigState.Fprintf",
-	fnConfigFprintln:     "ConfigState.Fprintln",
-	fnConfigSdump:        "ConfigState.Sdump",
-	fnConfigPrint:        "ConfigState.Print",
-	fnConfigPrintln:      "ConfigState.Println",
-	fnConfigSprint:       "ConfigState.Sprint",
-	fnConfigSprintf:      "ConfigState.Sprintf",
-	fnConfigSprintln:     "ConfigState.Sprintln",
-	fnConfigErrorf:       "ConfigState.Errorf",
-	fnConfigNewFormatter: "ConfigState.NewFormatter",
+	fnConfigFdump:        "Config.Fdump",
+	fnConfigFprint:       "Config.Fprint",
+	fnConfigFprintf:      "Config.Fprintf",
+	fnConfigFprintln:     "Config.Fprintln",
+	fnConfigSdump:        "Config.Sdump",
+	fnConfigPrint:        "Config.Print",
+	fnConfigPrintln:      "Config.Println",
+	fnConfigSprint:       "Config.Sprint",
+	fnConfigSprintf:      "Config.Sprintf",
+	fnConfigSprintln:     "Config.Sprintln",
+	fnConfigErrorf:       "Config.Errorf",
+	fnConfigNewFormatter: "Config.NewFormatter",
 	fnErrorf:             "spew.Errorf",
 	fnFprint:             "spew.Fprint",
 	fnFprintln:           "spew.Fprintln",
@@ -89,10 +89,10 @@ func (f spewFunc) String() string {
 }
 
 // spewTest is used to describe a test to be performed against the public
-// functions of the spew package or ConfigState.
+// functions of the spew package or Config.
 type spewTest struct {
 	line   string // use line() to fill this
-	cs     *spew.ConfigState
+	cfg    *spew.Config
 	f      spewFunc
 	format string
 	in     interface{}
@@ -100,7 +100,7 @@ type spewTest struct {
 }
 
 // spewTests houses the tests to be performed against the public functions of
-// the spew package and ConfigState.
+// the spew package and Config.
 //
 // These tests are only intended to ensure the public functions are exercised
 // and are intentionally not exhaustive of types.  The exhaustive type
@@ -129,15 +129,15 @@ func redirStdout(f func()) ([]byte, error) {
 func initSpewTests() {
 	// Config states with various settings.
 	cfgDefault := spew.NewDefaultConfig()
-	cfgNoMethods := &spew.ConfigState{Indent: " ", DisableMethods: true}
-	cfgNoPmethods := &spew.ConfigState{Indent: " ", DisablePointerMethods: true}
-	cfgMaxDepth := &spew.ConfigState{Indent: " ", MaxDepth: 1}
-	cfgContinue := &spew.ConfigState{Indent: " ", ContinueOnMethod: true}
-	cfgNoPtrAddr := &spew.ConfigState{DisablePointerAddresses: true}
-	cfgNoCap := &spew.ConfigState{DisableCapacities: true}
-	cfgTrailingComma := &spew.ConfigState{Indent: " ", TrailingCommas: true}
-	cfgNoUnexported := &spew.ConfigState{Indent: " ", DisableUnexported: true}
-	cfgQuotes := &spew.ConfigState{QuoteStrings: true}
+	cfgNoMethods := &spew.Config{Indent: " ", DisableMethods: true}
+	cfgNoPmethods := &spew.Config{Indent: " ", DisablePointerMethods: true}
+	cfgMaxDepth := &spew.Config{Indent: " ", MaxDepth: 1}
+	cfgContinue := &spew.Config{Indent: " ", ContinueOnMethod: true}
+	cfgNoPtrAddr := &spew.Config{DisablePointerAddresses: true}
+	cfgNoCap := &spew.Config{DisableCapacities: true}
+	cfgTrailingComma := &spew.Config{Indent: " ", TrailingCommas: true}
+	cfgNoUnexported := &spew.Config{Indent: " ", DisableUnexported: true}
+	cfgQuotes := &spew.Config{QuoteStrings: true}
 	cfgClean := &spew.CleanConfig
 
 	// Variables for tests on types which implement Stringer interface with and
@@ -292,19 +292,19 @@ func TestSpew(t *testing.T) {
 		buf := new(bytes.Buffer)
 		switch test.f {
 		case fnConfigFdump:
-			test.cs.Fdump(buf, test.in)
+			test.cfg.Fdump(buf, test.in)
 
 		case fnConfigFprint:
-			test.cs.Fprint(buf, test.in)
+			test.cfg.Fprint(buf, test.in)
 
 		case fnConfigFprintf:
-			test.cs.Fprintf(buf, test.format, test.in)
+			test.cfg.Fprintf(buf, test.format, test.in)
 
 		case fnConfigFprintln:
-			test.cs.Fprintln(buf, test.in)
+			test.cfg.Fprintln(buf, test.in)
 
 		case fnConfigPrint:
-			b, err := redirStdout(func() { test.cs.Print(test.in) })
+			b, err := redirStdout(func() { test.cfg.Print(test.in) })
 			if err != nil {
 				t.Errorf("line %s: %v %v", test.line, test.f, err)
 				continue
@@ -312,7 +312,7 @@ func TestSpew(t *testing.T) {
 			buf.Write(b)
 
 		case fnConfigPrintln:
-			b, err := redirStdout(func() { test.cs.Println(test.in) })
+			b, err := redirStdout(func() { test.cfg.Println(test.in) })
 			if err != nil {
 				t.Errorf("line %s: %v %v", test.line, test.f, err)
 				continue
@@ -320,27 +320,27 @@ func TestSpew(t *testing.T) {
 			buf.Write(b)
 
 		case fnConfigSdump:
-			str := test.cs.Sdump(test.in)
+			str := test.cfg.Sdump(test.in)
 			buf.WriteString(str)
 
 		case fnConfigSprint:
-			str := test.cs.Sprint(test.in)
+			str := test.cfg.Sprint(test.in)
 			buf.WriteString(str)
 
 		case fnConfigSprintf:
-			str := test.cs.Sprintf(test.format, test.in)
+			str := test.cfg.Sprintf(test.format, test.in)
 			buf.WriteString(str)
 
 		case fnConfigSprintln:
-			str := test.cs.Sprintln(test.in)
+			str := test.cfg.Sprintln(test.in)
 			buf.WriteString(str)
 
 		case fnConfigErrorf:
-			err := test.cs.Errorf(test.format, test.in)
+			err := test.cfg.Errorf(test.format, test.in)
 			buf.WriteString(err.Error())
 
 		case fnConfigNewFormatter:
-			fmt.Fprintf(buf, test.format, test.cs.NewFormatter(test.in))
+			fmt.Fprintf(buf, test.format, test.cfg.NewFormatter(test.in))
 
 		case fnErrorf:
 			err := spew.Errorf(test.format, test.in)

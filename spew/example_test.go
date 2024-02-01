@@ -141,13 +141,13 @@ func ExamplePrintf() {
 	// circular: {1 <*>{1 <*><shown>}}
 }
 
-// This example demonstrates how to use a ConfigState.
-func ExampleConfigState() {
-	// Modify the indent level of the ConfigState only.  The global
+// This example demonstrates how to use a Config.
+func ExampleConfig() {
+	// Modify the indent level of the Config only.  The global
 	// configuration is not modified.
-	scs := spew.ConfigState{Indent: "\t"}
+	scs := spew.Config{Indent: "\t"}
 
-	// Output using the ConfigState instance.
+	// Output using the Config instance.
 	v := map[string]int{"one": 1}
 	scs.Printf("v: %v\n", v)
 	scs.Dump(v)
@@ -159,21 +159,21 @@ func ExampleConfigState() {
 	// }
 }
 
-// This example demonstrates how to use ConfigState.Dump to dump variables to
+// This example demonstrates how to use Config.Dump to dump variables to
 // stdout
-func ExampleConfigState_Dump() {
+func ExampleConfig_Dump() {
 	// See the top-level Dump example for details on the types used in this
 	// example.
 
-	// Create two ConfigState instances with different indentation.
-	scs := spew.ConfigState{Indent: "\t"}
-	scs2 := spew.ConfigState{Indent: " "}
+	// Create two Config instances with different indentation.
+	scs := spew.Config{Indent: "\t"}
+	scs2 := spew.Config{Indent: " "}
 
 	// Setup some sample data structures for the example.
 	bar := Bar{uintptr(0)}
 	s1 := Foo{bar, map[interface{}]interface{}{"one": true}}
 
-	// Dump using the ConfigState instances.
+	// Dump using the Config instances.
 	scs.Dump(s1)
 	scs2.Dump(s1)
 
@@ -197,26 +197,26 @@ func ExampleConfigState_Dump() {
 	//
 }
 
-// This example demonstrates how to use ConfigState.Printf to display a variable
+// This example demonstrates how to use Config.Printf to display a variable
 // with a format string and inline formatting.
-func ExampleConfigState_Printf() {
+func ExampleConfig_Printf() {
 	// See the top-level Dump example for details on the types used in this
 	// example.
 
-	// Create two ConfigState instances and modify the method handling of the
-	// first ConfigState only.
+	// Create two Config instances and modify the method handling of the
+	// first Config only.
 	scs := spew.NewDefaultConfig()
 	scs2 := spew.NewDefaultConfig()
 	scs.DisableMethods = true
 
 	// Alternatively
-	// scs := spew.ConfigState{Indent: " ", DisableMethods: true}
-	// scs2 := spew.ConfigState{Indent: " "}
+	// scs := spew.Config{Indent: " ", DisableMethods: true}
+	// scs2 := spew.Config{Indent: " "}
 
 	// This is of type Flag which implements a Stringer and has raw value 1.
 	f := flagTwo
 
-	// Dump using the ConfigState instances.
+	// Dump using the Config instances.
 	scs.Printf("f: %v\n", f)
 	scs2.Printf("f: %v\n", f)
 

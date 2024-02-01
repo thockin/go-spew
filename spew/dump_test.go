@@ -993,7 +993,7 @@ func TestDump(t *testing.T) {
 }
 
 func TestDumpSortedKeys(t *testing.T) {
-	cfg := spew.ConfigState{SortKeys: true}
+	cfg := spew.Config{SortKeys: true}
 	s := cfg.Sdump(map[int]string{1: "1", 3: "3", 2: "2"})
 	expected := "(map[int]string) (len=3) {\n(int) 1: (string) (len=1) " +
 		"\"1\",\n(int) 2: (string) (len=1) \"2\",\n(int) 3: (string) " +
@@ -1116,7 +1116,7 @@ func TestDumpUnexportedFields(t *testing.T) {
 	addDumpTest(&pv2, "(**"+v2t+")("+pv2Addr+"->"+v2Addr+")("+v2s+")\n")
 	addDumpTest(nv2, "(*"+v2t+")(<nil>)\n")
 
-	cs := spew.ConfigState{
+	cfg := spew.Config{
 		Indent:            " ",
 		DisableUnexported: true,
 	}
@@ -1124,7 +1124,7 @@ func TestDumpUnexportedFields(t *testing.T) {
 	t.Logf("Running %d tests", len(dumpTests))
 	for i, test := range dumpTests {
 		buf := new(bytes.Buffer)
-		cs.Fdump(buf, test.in)
+		cfg.Fdump(buf, test.in)
 		s := buf.String()
 		if testFailed(s, test.wants) {
 			t.Errorf("Dump #%d\n got: %s\nwant: %s", i, s, stringizeWants(test.wants, "\n  or: %s"))

@@ -39,7 +39,7 @@ type formatState struct {
 	depth          int
 	pointers       map[uintptr]int
 	ignoreNextType bool
-	cs             *ConfigState
+	cfg            *Config
 }
 
 // buildDefaultFormat recreates the original format string without precision
@@ -224,9 +224,9 @@ func (f *formatState) format(v reflect.Value) {
 
 	// Call Stringer/error interfaces if they exist and the handle methods
 	// flag is enabled.
-	if !f.cs.DisableMethods {
+	if !f.cfg.DisableMethods {
 		if (kind != reflect.Invalid) && (kind != reflect.Interface) {
-			if handled := handleMethods(f.cs, f.fs, v); handled {
+			if handled := handleMethods(f.cfg, f.fs, v); handled {
 				return
 			}
 		}
@@ -268,13 +268,13 @@ func (f *formatState) format(v reflect.Value) {
 	case reflect.Array:
 		f.fs.Write(openBracketBytes)
 		f.depth++
-		if (f.cs.MaxDepth != 0) && (f.depth > f.cs.MaxDepth) {
+		if (f.cfg.MaxDepth != 0) && (f.depth > f.cfg.MaxDepth) {
 			f.fs.Write(maxShortBytes)
 		} else {
 			numEntries := v.Len()
 			for i := 0; i < numEntries; i++ {
 				if i > 0 {
-					if f.cs.Commas {
+					if f.cfg.Commas {
 						f.fs.Write(commaBytes)
 					} else {
 						f.fs.Write(spaceBytes)
@@ -289,7 +289,7 @@ func (f *formatState) format(v reflect.Value) {
 
 	case reflect.String:
 		s := v.String()
-		if f.cs.QuoteStrings {
+		if f.cfg.QuoteStrings {
 			s = strconv.Quote(s)
 		}
 		f.fs.Write([]byte(s))
@@ -314,16 +314,16 @@ func (f *formatState) format(v reflect.Value) {
 
 		f.fs.Write(openMapBytes)
 		f.depth++
-		if (f.cs.MaxDepth != 0) && (f.depth > f.cs.MaxDepth) {
+		if (f.cfg.MaxDepth != 0) && (f.depth > f.cfg.MaxDepth) {
 			f.fs.Write(maxShortBytes)
 		} else {
 			keys := v.MapKeys()
-			if f.cs.SortKeys {
-				sortValues(keys, f.cs)
+			if f.cfg.SortKeys {
+				sortValues(keys, f.cfg)
 			}
 			for i, key := range keys {
 				if i > 0 {
-					if f.cs.Commas {
+					if f.cfg.Commas {
 						f.fs.Write(commaBytes)
 					} else {
 						f.fs.Write(spaceBytes)
@@ -343,18 +343,18 @@ func (f *formatState) format(v reflect.Value) {
 		numFields := v.NumField()
 		f.fs.Write(openBraceBytes)
 		f.depth++
-		if (f.cs.MaxDepth != 0) && (f.depth > f.cs.MaxDepth) {
+		if (f.cfg.MaxDepth != 0) && (f.depth > f.cfg.MaxDepth) {
 			f.fs.Write(maxShortBytes)
 		} else {
 			vt := v.Type()
 			for i := 0; i < numFields; i++ {
 				vtf := vt.Field(i)
 				// StructField has an IsExported() method, but only in 1.17+.
-				if f.cs.DisableUnexported && vtf.PkgPath != "" {
+				if f.cfg.DisableUnexported && vtf.PkgPath != "" {
 					continue
 				}
 				if i > 0 {
-					if f.cs.Commas {
+					if f.cfg.Commas {
 						f.fs.Write(commaBytes)
 					} else {
 						f.fs.Write(spaceBytes)
@@ -377,7 +377,7 @@ func (f *formatState) format(v reflect.Value) {
 		printHexPtr(f.fs, v.Pointer())
 
 	case reflect.Func:
-		if f.cs.FuncSymbols {
+		if f.cfg.FuncSymbols {
 			fn := runtime.FuncForPC(v.Pointer())
 			if fn != nil {
 				name := fn.Name()
@@ -430,8 +430,8 @@ func (f *formatState) Format(fs fmt.State, verb rune) {
 
 // newFormatter is a helper function to consolidate the logic from the various
 // public methods which take varying config states.
-func newFormatter(cs *ConfigState, v interface{}) fmt.Formatter {
-	fs := &formatState{value: v, cs: cs}
+func newFormatter(cfg *Config, v interface{}) fmt.Formatter {
+	fs := &formatState{value: v, cfg: cfg}
 	fs.pointers = make(map[uintptr]int)
 	return fs
 }

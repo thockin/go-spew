@@ -146,7 +146,7 @@ type sortTestCase struct {
 	expected []reflect.Value
 }
 
-func helpTestSortValues(tests []sortTestCase, cs *spew.ConfigState, t *testing.T) {
+func helpTestSortValues(tests []sortTestCase, cfg *spew.Config, t *testing.T) {
 	getInterfaces := func(values []reflect.Value) []interface{} {
 		interfaces := []interface{}{}
 		for _, v := range values {
@@ -156,7 +156,7 @@ func helpTestSortValues(tests []sortTestCase, cs *spew.ConfigState, t *testing.T
 	}
 
 	for _, test := range tests {
-		spew.SortValues(test.input, cs)
+		spew.SortValues(test.input, cfg)
 		// reflect.DeepEqual cannot really make sense of reflect.Value,
 		// probably because of all the pointer tricks. For instance,
 		// v(2.0) != v(2.0) on a 32-bits system. Turn them into interface{}
@@ -239,8 +239,8 @@ func TestSortValues(t *testing.T) {
 			[]reflect.Value{embedB, embedA, embedC},
 		},
 	}
-	cs := spew.ConfigState{DisableMethods: true, SpewKeys: false}
-	helpTestSortValues(tests, &cs, t)
+	cfg := spew.Config{DisableMethods: true, SpewKeys: false}
+	helpTestSortValues(tests, &cfg, t)
 }
 
 // TestSortValuesWithMethods ensures the sort functionality for relect.Value
@@ -274,8 +274,8 @@ func TestSortValuesWithMethods(t *testing.T) {
 			[]reflect.Value{v(unsortableStruct{2}), v(unsortableStruct{1}), v(unsortableStruct{3})},
 		},
 	}
-	cs := spew.ConfigState{DisableMethods: false, SpewKeys: false}
-	helpTestSortValues(tests, &cs, t)
+	cfg := spew.Config{DisableMethods: false, SpewKeys: false}
+	helpTestSortValues(tests, &cfg, t)
 }
 
 // TestSortValuesWithSpew ensures the sort functionality for relect.Value
@@ -308,6 +308,6 @@ func TestSortValuesWithSpew(t *testing.T) {
 			[]reflect.Value{v(unsortableStruct{1}), v(unsortableStruct{2}), v(unsortableStruct{3})},
 		},
 	}
-	cs := spew.ConfigState{DisableMethods: true, SpewKeys: true}
-	helpTestSortValues(tests, &cs, t)
+	cfg := spew.Config{DisableMethods: true, SpewKeys: true}
+	helpTestSortValues(tests, &cfg, t)
 }
