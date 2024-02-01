@@ -95,7 +95,7 @@ type spewTest struct {
 	cfg    *spew.Config
 	f      spewFunc
 	format string
-	in     interface{}
+	in     any
 	want   string
 }
 
@@ -163,7 +163,7 @@ func initSpewTests() {
 
 	// commatester is to test trailing commas
 	type commaTester struct {
-		slice []interface{}
+		slice []any
 		m     map[string]int
 	}
 
@@ -226,7 +226,7 @@ func initSpewTests() {
 		{line(), cfgNoCap, fnConfigSdump, "", make([]string, 0, 10), "([]string) {\n}\n"},
 		{line(), cfgNoCap, fnConfigSdump, "", make([]string, 1, 10), "([]string) (len=1) {\n(string) \"\"\n}\n"},
 		{line(), cfgTrailingComma, fnConfigFdump, "", commaTester{
-			slice: []interface{}{
+			slice: []any{
 				map[string]int{"one": 1},
 			},
 			m: map[string]int{"one": 1},

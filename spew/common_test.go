@@ -147,8 +147,8 @@ type sortTestCase struct {
 }
 
 func helpTestSortValues(tests []sortTestCase, cfg *spew.Config, t *testing.T) {
-	getInterfaces := func(values []reflect.Value) []interface{} {
-		interfaces := []interface{}{}
+	getInterfaces := func(values []reflect.Value) []any {
+		interfaces := []any{}
 		for _, v := range values {
 			interfaces = append(interfaces, v.Interface())
 		}
@@ -159,7 +159,7 @@ func helpTestSortValues(tests []sortTestCase, cfg *spew.Config, t *testing.T) {
 		spew.SortValues(test.input, cfg)
 		// reflect.DeepEqual cannot really make sense of reflect.Value,
 		// probably because of all the pointer tricks. For instance,
-		// v(2.0) != v(2.0) on a 32-bits system. Turn them into interface{}
+		// v(2.0) != v(2.0) on a 32-bits system. Turn them into any
 		// instead.
 		input := getInterfaces(test.input)
 		expected := getInterfaces(test.expected)

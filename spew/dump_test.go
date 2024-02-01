@@ -71,7 +71,7 @@ import (
 
 // dumpTest is used to describe a test to be performed against the Dump method.
 type dumpTest struct {
-	in    interface{}
+	in    any
 	wants []string
 }
 
@@ -80,7 +80,7 @@ var dumpTests = make([]dumpTest, 0)
 
 // addDumpTest is a helper method to append the passed input and desired result
 // to dumpTests
-func addDumpTest(in interface{}, wants ...string) {
+func addDumpTest(in any, wants ...string) {
 	test := dumpTest{in, wants}
 	dumpTests = append(dumpTests, test)
 }
@@ -351,11 +351,11 @@ func addArrayDumpTests() {
 
 	// Array containing interfaces.
 	v3i0 := "one"
-	v3 := [3]interface{}{v3i0, int(2), uint(3)}
+	v3 := [3]any{v3i0, int(2), uint(3)}
 	v3i0Len := fmt.Sprintf("%d", len(v3i0))
 	v3Len := fmt.Sprintf("%d", len(v3))
 	v3Cap := fmt.Sprintf("%d", cap(v3))
-	nv3 := (*[3]interface{})(nil)
+	nv3 := (*[3]any)(nil)
 	pv3 := &v3
 	v3Addr := fmt.Sprintf("%p", pv3)
 	pv3Addr := fmt.Sprintf("%p", &pv3)
@@ -442,11 +442,11 @@ func addSliceDumpTests() {
 
 	// Slice containing interfaces.
 	v3i0 := "one"
-	v3 := []interface{}{v3i0, int(2), uint(3), nil}
+	v3 := []any{v3i0, int(2), uint(3), nil}
 	v3i0Len := fmt.Sprintf("%d", len(v3i0))
 	v3Len := fmt.Sprintf("%d", len(v3))
 	v3Cap := fmt.Sprintf("%d", cap(v3))
-	nv3 := (*[]interface{})(nil)
+	nv3 := (*[]any)(nil)
 	pv3 := &v3
 	v3Addr := fmt.Sprintf("%p", pv3)
 	pv3Addr := fmt.Sprintf("%p", &pv3)
@@ -522,8 +522,8 @@ func addStringDumpTests() {
 
 func addInterfaceDumpTests() {
 	// Nil interface.
-	var v interface{}
-	nv := (*interface{})(nil)
+	var v any
+	nv := (*any)(nil)
 	pv := &v
 	vAddr := fmt.Sprintf("%p", pv)
 	pvAddr := fmt.Sprintf("%p", &pv)
@@ -535,7 +535,7 @@ func addInterfaceDumpTests() {
 	addDumpTest(nv, "(*"+vt+")(<nil>)\n")
 
 	// Sub-interface.
-	v2 := interface{}(uint16(65535))
+	v2 := any(uint16(65535))
 	pv2 := &v2
 	v2Addr := fmt.Sprintf("%p", pv2)
 	pv2Addr := fmt.Sprintf("%p", &pv2)
@@ -607,10 +607,10 @@ func addMapDumpTests() {
 	// Map with interface keys and values.
 	k3 := "one"
 	k3Len := fmt.Sprintf("%d", len(k3))
-	m3 := map[interface{}]interface{}{k3: 1}
+	m3 := map[any]any{k3: 1}
 	m3Len := fmt.Sprintf("%d", len(m3))
-	nilMap3 := map[interface{}]interface{}(nil)
-	nm3 := (*map[interface{}]interface{})(nil)
+	nilMap3 := map[any]any(nil)
+	nm3 := (*map[any]any)(nil)
 	pm3 := &m3
 	m3Addr := fmt.Sprintf("%p", pm3)
 	pm3Addr := fmt.Sprintf("%p", &pm3)
@@ -628,10 +628,10 @@ func addMapDumpTests() {
 	// Map with nil interface value.
 	k4 := "nil"
 	k4Len := fmt.Sprintf("%d", len(k4))
-	m4 := map[string]interface{}{k4: nil}
+	m4 := map[string]any{k4: nil}
 	m4Len := fmt.Sprintf("%d", len(m4))
-	nilMap4 := map[string]interface{}(nil)
-	nm4 := (*map[string]interface{})(nil)
+	nilMap4 := map[string]any(nil)
+	nm4 := (*map[string]any)(nil)
 	pm4 := &m4
 	m4Addr := fmt.Sprintf("%p", pm4)
 	pm4Addr := fmt.Sprintf("%p", &pm4)

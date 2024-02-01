@@ -497,7 +497,7 @@ func (d *dumpState) writeComma(hasMoreElements bool) {
 
 // fdump is a helper function to consolidate the logic from the various public
 // methods which take varying writers and config states.
-func fdump(cfg *Config, w io.Writer, a ...interface{}) {
+func fdump(cfg *Config, w io.Writer, a ...any) {
 	for _, arg := range a {
 		if arg == nil {
 			w.Write(interfaceBytes)
@@ -516,13 +516,13 @@ func fdump(cfg *Config, w io.Writer, a ...interface{}) {
 
 // Fdump formats and displays the passed arguments to io.Writer w.  It formats
 // exactly the same as Dump.
-func Fdump(w io.Writer, a ...interface{}) {
+func Fdump(w io.Writer, a ...any) {
 	fdump(&Default, w, a...)
 }
 
 // Sdump returns a string with the passed arguments formatted exactly the same
 // as Dump.
-func Sdump(a ...interface{}) string {
+func Sdump(a ...any) string {
 	var buf bytes.Buffer
 	fdump(&Default, &buf, a...)
 	return buf.String()
@@ -549,6 +549,6 @@ func Sdump(a ...interface{}) string {
 //
 // See Fdump if you would prefer dumping to an arbitrary io.Writer or Sdump to
 // get the formatted result as a string.
-func Dump(a ...interface{}) {
+func Dump(a ...any) {
 	fdump(&Default, os.Stdout, a...)
 }

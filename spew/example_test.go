@@ -47,7 +47,7 @@ type Bar struct {
 
 type Foo struct {
 	unexportedField Bar
-	ExportedField   map[interface{}]interface{}
+	ExportedField   map[any]any
 }
 
 // This example demonstrates how to use Dump to dump variables to stdout.
@@ -79,13 +79,13 @@ func ExampleDump() {
 
 		type Foo struct {
 			unexportedField Bar
-			ExportedField   map[interface{}]interface{}
+			ExportedField   map[any]any
 		}
 	*/
 
 	// Setup some sample data structures for the example.
 	bar := Bar{uintptr(0)}
-	s1 := Foo{bar, map[interface{}]interface{}{"one": true}}
+	s1 := Foo{bar, map[any]any{"one": true}}
 	f := Flag(5)
 	b := []byte{
 		0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
@@ -171,7 +171,7 @@ func ExampleConfig_Dump() {
 
 	// Setup some sample data structures for the example.
 	bar := Bar{uintptr(0)}
-	s1 := Foo{bar, map[interface{}]interface{}{"one": true}}
+	s1 := Foo{bar, map[any]any{"one": true}}
 
 	// Dump using the Config instances.
 	scs.Dump(s1)

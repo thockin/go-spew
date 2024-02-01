@@ -165,7 +165,7 @@ var CleanConfig = Config{
 // This function is shorthand for the following syntax:
 //
 //	fmt.Errorf(format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Errorf(format string, a ...interface{}) (err error) {
+func (c *Config) Errorf(format string, a ...any) (err error) {
 	return fmt.Errorf(format, c.convertArgs(a)...)
 }
 
@@ -177,7 +177,7 @@ func (c *Config) Errorf(format string, a ...interface{}) (err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Fprint(w, c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
+func (c *Config) Fprint(w io.Writer, a ...any) (n int, err error) {
 	return fmt.Fprint(w, c.convertArgs(a)...)
 }
 
@@ -189,7 +189,7 @@ func (c *Config) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Fprintf(w, format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Fprintf(w io.Writer, format string, a ...interface{}) (n int, err error) {
+func (c *Config) Fprintf(w io.Writer, format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(w, format, c.convertArgs(a)...)
 }
 
@@ -200,7 +200,7 @@ func (c *Config) Fprintf(w io.Writer, format string, a ...interface{}) (n int, e
 // This function is shorthand for the following syntax:
 //
 //	fmt.Fprintln(w, c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Fprintln(w io.Writer, a ...interface{}) (n int, err error) {
+func (c *Config) Fprintln(w io.Writer, a ...any) (n int, err error) {
 	return fmt.Fprintln(w, c.convertArgs(a)...)
 }
 
@@ -212,7 +212,7 @@ func (c *Config) Fprintln(w io.Writer, a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Print(c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Print(a ...interface{}) (n int, err error) {
+func (c *Config) Print(a ...any) (n int, err error) {
 	return fmt.Print(c.convertArgs(a)...)
 }
 
@@ -224,7 +224,7 @@ func (c *Config) Print(a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Printf(format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Printf(format string, a ...interface{}) (n int, err error) {
+func (c *Config) Printf(format string, a ...any) (n int, err error) {
 	return fmt.Printf(format, c.convertArgs(a)...)
 }
 
@@ -236,7 +236,7 @@ func (c *Config) Printf(format string, a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Println(c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Println(a ...interface{}) (n int, err error) {
+func (c *Config) Println(a ...any) (n int, err error) {
 	return fmt.Println(c.convertArgs(a)...)
 }
 
@@ -247,7 +247,7 @@ func (c *Config) Println(a ...interface{}) (n int, err error) {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Sprint(c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Sprint(a ...interface{}) string {
+func (c *Config) Sprint(a ...any) string {
 	return fmt.Sprint(c.convertArgs(a)...)
 }
 
@@ -258,7 +258,7 @@ func (c *Config) Sprint(a ...interface{}) string {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Sprintf(format, c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Sprintf(format string, a ...interface{}) string {
+func (c *Config) Sprintf(format string, a ...any) string {
 	return fmt.Sprintf(format, c.convertArgs(a)...)
 }
 
@@ -269,7 +269,7 @@ func (c *Config) Sprintf(format string, a ...interface{}) string {
 // This function is shorthand for the following syntax:
 //
 //	fmt.Sprintln(c.NewFormatter(a), c.NewFormatter(b))
-func (c *Config) Sprintln(a ...interface{}) string {
+func (c *Config) Sprintln(a ...any) string {
 	return fmt.Sprintln(c.convertArgs(a)...)
 }
 
@@ -288,13 +288,13 @@ func (c *Config) Sprintln(a ...interface{}) string {
 // Typically this function shouldn't be called directly.  It is much easier to make
 // use of the custom formatter by calling one of the convenience functions such as
 // c.Printf, c.Println, or c.Printf.
-func (c *Config) NewFormatter(v interface{}) fmt.Formatter {
+func (c *Config) NewFormatter(v any) fmt.Formatter {
 	return newFormatter(c, v)
 }
 
 // Fdump formats and displays the passed arguments to io.Writer w.  It formats
 // exactly the same as Dump.
-func (c *Config) Fdump(w io.Writer, a ...interface{}) {
+func (c *Config) Fdump(w io.Writer, a ...any) {
 	fdump(c, w, a...)
 }
 
@@ -319,13 +319,13 @@ func (c *Config) Fdump(w io.Writer, a ...interface{}) {
 //
 // See Fdump if you would prefer dumping to an arbitrary io.Writer or Sdump to
 // get the formatted result as a string.
-func (c *Config) Dump(a ...interface{}) {
+func (c *Config) Dump(a ...any) {
 	fdump(c, os.Stdout, a...)
 }
 
 // Sdump returns a string with the passed arguments formatted exactly the same
 // as Dump.
-func (c *Config) Sdump(a ...interface{}) string {
+func (c *Config) Sdump(a ...any) string {
 	var buf bytes.Buffer
 	fdump(c, &buf, a...)
 	return buf.String()
@@ -334,8 +334,8 @@ func (c *Config) Sdump(a ...interface{}) string {
 // convertArgs accepts a slice of arguments and returns a slice of the same
 // length with each argument converted to a spew Formatter interface using
 // the Config associated with s.
-func (c *Config) convertArgs(args []interface{}) (formatters []interface{}) {
-	formatters = make([]interface{}, len(args))
+func (c *Config) convertArgs(args []any) (formatters []any) {
+	formatters = make([]any, len(args))
 	for index, arg := range args {
 		formatters[index] = newFormatter(c, arg)
 	}
