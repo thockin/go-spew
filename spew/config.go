@@ -273,23 +273,21 @@ func (c *Config) Sprintln(a ...interface{}) string {
 	return fmt.Sprintln(c.convertArgs(a)...)
 }
 
-/*
-NewFormatter returns a custom formatter that satisfies the fmt.Formatter
-interface.  As a result, it integrates cleanly with standard fmt package
-printing functions.  The formatter is useful for inline printing of smaller data
-types similar to the standard %v format specifier.
-
-The custom formatter only responds to the %v (most compact), %+v (adds pointer
-addresses), %#v (adds types), and %#+v (adds types and pointer addresses) verb
-combinations.  Any other verbs such as %x and %q will be sent to the the
-standard fmt package for formatting.  In addition, the custom formatter ignores
-the width and precision arguments (however they will still work on the format
-specifiers not handled by the custom formatter).
-
-Typically this function shouldn't be called directly.  It is much easier to make
-use of the custom formatter by calling one of the convenience functions such as
-c.Printf, c.Println, or c.Printf.
-*/
+// NewFormatter returns a custom formatter that satisfies the fmt.Formatter
+// interface.  As a result, it integrates cleanly with standard fmt package
+// printing functions.  The formatter is useful for inline printing of smaller data
+// types similar to the standard %v format specifier.
+//
+// The custom formatter only responds to the %v (most compact), %+v (adds pointer
+// addresses), %#v (adds types), and %#+v (adds types and pointer addresses) verb
+// combinations.  Any other verbs such as %x and %q will be sent to the the
+// standard fmt package for formatting.  In addition, the custom formatter ignores
+// the width and precision arguments (however they will still work on the format
+// specifiers not handled by the custom formatter).
+//
+// Typically this function shouldn't be called directly.  It is much easier to make
+// use of the custom formatter by calling one of the convenience functions such as
+// c.Printf, c.Println, or c.Printf.
 func (c *Config) NewFormatter(v interface{}) fmt.Formatter {
 	return newFormatter(c, v)
 }
@@ -300,29 +298,27 @@ func (c *Config) Fdump(w io.Writer, a ...interface{}) {
 	fdump(c, w, a...)
 }
 
-/*
-Dump displays the passed parameters to standard out with newlines, customizable
-indentation, and additional debug information such as complete types and all
-pointer addresses used to indirect to the final value.  It provides the
-following features over the built-in printing facilities provided by the fmt
-package:
-
-  - Pointers are dereferenced and followed
-  - Circular data structures are detected and handled properly
-  - Custom Stringer/error interfaces are optionally invoked, including
-    on unexported types
-  - Custom types which only implement the Stringer/error interfaces via
-    a pointer receiver are optionally invoked when passing non-pointer
-    variables
-  - Byte arrays and slices are dumped like the hexdump -C command which
-    includes offsets, byte values in hex, and ASCII output
-
-The configuration options are controlled by modifying the public members
-of c.  See Config for options documentation.
-
-See Fdump if you would prefer dumping to an arbitrary io.Writer or Sdump to
-get the formatted result as a string.
-*/
+// Dump displays the passed parameters to standard out with newlines, customizable
+// indentation, and additional debug information such as complete types and all
+// pointer addresses used to indirect to the final value.  It provides the
+// following features over the built-in printing facilities provided by the fmt
+// package:
+//
+//   - Pointers are dereferenced and followed
+//   - Circular data structures are detected and handled properly
+//   - Custom Stringer/error interfaces are optionally invoked, including
+//     on unexported types
+//   - Custom types which only implement the Stringer/error interfaces via
+//     a pointer receiver are optionally invoked when passing non-pointer
+//     variables
+//   - Byte arrays and slices are dumped like the hexdump -C command which
+//     includes offsets, byte values in hex, and ASCII output
+//
+// The configuration options are controlled by modifying the public members
+// of c.  See Config for options documentation.
+//
+// See Fdump if you would prefer dumping to an arbitrary io.Writer or Sdump to
+// get the formatted result as a string.
 func (c *Config) Dump(a ...interface{}) {
 	fdump(c, os.Stdout, a...)
 }

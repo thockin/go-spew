@@ -14,51 +14,49 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
-Test Summary:
-NOTE: For each test, a nil pointer, a single pointer and double pointer to the
-base test element are also tested to ensure proper indirection across all types.
-
-- Max int8, int16, int32, int64, int
-- Max uint8, uint16, uint32, uint64, uint
-- Boolean true and false
-- Standard complex64 and complex128
-- Array containing standard ints
-- Array containing type with custom formatter on pointer receiver only
-- Array containing interfaces
-- Array containing bytes
-- Slice containing standard float32 values
-- Slice containing type with custom formatter on pointer receiver only
-- Slice containing interfaces
-- Slice containing bytes
-- Nil slice
-- Standard string
-- Nil interface
-- Sub-interface
-- Map with string keys and int vals
-- Map with custom formatter type on pointer receiver only keys and vals
-- Map with interface keys and values
-- Map with nil interface value
-- Struct with primitives
-- Struct that contains another struct
-- Struct that contains custom type with Stringer pointer interface via both
-  exported and unexported fields
-- Struct that contains embedded struct and field to same struct
-- Struct that contains unexported field and exported field
-- Uintptr to 0 (null pointer)
-- Uintptr address of real variable
-- Unsafe.Pointer to 0 (null pointer)
-- Unsafe.Pointer to address of real variable
-- Nil channel
-- Standard int channel
-- Function with no params and no returns
-- Function with param and no returns
-- Function with multiple params and multiple returns
-- Struct that is circular through self referencing
-- Structs that are circular through cross referencing
-- Structs that are indirectly circular
-- Type that panics in its Stringer interface
-*/
+// Test Summary:
+// NOTE: For each test, a nil pointer, a single pointer and double pointer to the
+// base test element are also tested to ensure proper indirection across all types.
+//
+// - Max int8, int16, int32, int64, int
+// - Max uint8, uint16, uint32, uint64, uint
+// - Boolean true and false
+// - Standard complex64 and complex128
+// - Array containing standard ints
+// - Array containing type with custom formatter on pointer receiver only
+// - Array containing interfaces
+// - Array containing bytes
+// - Slice containing standard float32 values
+// - Slice containing type with custom formatter on pointer receiver only
+// - Slice containing interfaces
+// - Slice containing bytes
+// - Nil slice
+// - Standard string
+// - Nil interface
+// - Sub-interface
+// - Map with string keys and int vals
+// - Map with custom formatter type on pointer receiver only keys and vals
+// - Map with interface keys and values
+// - Map with nil interface value
+// - Struct with primitives
+// - Struct that contains another struct
+// - Struct that contains custom type with Stringer pointer interface via both
+//   exported and unexported fields
+// - Struct that contains embedded struct and field to same struct
+// - Struct that contains unexported field and exported field
+// - Uintptr to 0 (null pointer)
+// - Uintptr address of real variable
+// - Unsafe.Pointer to 0 (null pointer)
+// - Unsafe.Pointer to address of real variable
+// - Nil channel
+// - Standard int channel
+// - Function with no params and no returns
+// - Function with param and no returns
+// - Function with multiple params and multiple returns
+// - Struct that is circular through self referencing
+// - Structs that are circular through cross referencing
+// - Structs that are indirectly circular
+// - Type that panics in its Stringer interface
 
 package spew_test
 

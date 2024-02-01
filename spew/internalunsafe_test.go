@@ -19,11 +19,9 @@
 //go:build !js && !appengine && !safe && !disableunsafe && go1.4
 // +build !js,!appengine,!safe,!disableunsafe,go1.4
 
-/*
-This test file is part of the spew package rather than than the spew_test
-package because it needs access to internals to properly test certain cases
-which are not possible via the public interface since they should never happen.
-*/
+// This test file is part of the spew package rather than than the spew_test
+// package because it needs access to internals to properly test certain cases
+// which are not possible via the public interface since they should never happen.
 
 package spew
 
