@@ -454,5 +454,5 @@ use of the custom formatter by calling one of the convenience functions such as
 Printf, Println, or Fprintf.
 */
 func NewFormatter(v interface{}) fmt.Formatter {
-	return newFormatter(&Config, v)
+	return newFormatter(&Default, v)
 }

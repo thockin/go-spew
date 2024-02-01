@@ -517,14 +517,14 @@ func fdump(cs *ConfigState, w io.Writer, a ...interface{}) {
 // Fdump formats and displays the passed arguments to io.Writer w.  It formats
 // exactly the same as Dump.
 func Fdump(w io.Writer, a ...interface{}) {
-	fdump(&Config, w, a...)
+	fdump(&Default, w, a...)
 }
 
 // Sdump returns a string with the passed arguments formatted exactly the same
 // as Dump.
 func Sdump(a ...interface{}) string {
 	var buf bytes.Buffer
-	fdump(&Config, &buf, a...)
+	fdump(&Default, &buf, a...)
 	return buf.String()
 }
 
@@ -546,11 +546,11 @@ package:
     includes offsets, byte values in hex, and ASCII output
 
 The configuration options are controlled by an exported package global,
-spew.Config.  See ConfigState for options documentation.
+spew.Default.  See ConfigState for options documentation.
 
 See Fdump if you would prefer dumping to an arbitrary io.Writer or Sdump to
 get the formatted result as a string.
 */
 func Dump(a ...interface{}) {
-	fdump(&Config, os.Stdout, a...)
+	fdump(&Default, os.Stdout, a...)
 }

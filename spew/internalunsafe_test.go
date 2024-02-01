@@ -57,7 +57,7 @@ func TestAddedReflectValue(t *testing.T) {
 	v := reflect.ValueOf(int8(5))
 	changeKind(&v, false)
 	buf := new(bytes.Buffer)
-	d := dumpState{w: buf, cs: &Config}
+	d := dumpState{w: buf, cs: &Default}
 	d.dump(v)
 	s := buf.String()
 	want := "(int8) 5"
@@ -80,7 +80,7 @@ func TestAddedReflectValue(t *testing.T) {
 	// Formatter using a reflect.Value that is exported.
 	changeKind(&v, false)
 	buf2 := new(dummyFmtState)
-	f := formatState{value: v, cs: &Config, fs: buf2}
+	f := formatState{value: v, cs: &Default, fs: buf2}
 	f.format(v)
 	s = buf2.String()
 	want = "5"
@@ -92,7 +92,7 @@ func TestAddedReflectValue(t *testing.T) {
 	// Formatter using a reflect.Value that is not exported.
 	changeKind(&v, true)
 	buf2.Reset()
-	f = formatState{value: v, cs: &Config, fs: buf2}
+	f = formatState{value: v, cs: &Default, fs: buf2}
 	f.format(v)
 	s = buf2.String()
 	want = "<int8 Value>"

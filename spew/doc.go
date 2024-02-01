@@ -69,7 +69,7 @@ printing style, use the convenience wrappers Printf, Fprintf, etc with
 
 Configuration of spew is handled by fields in the ConfigState type.  For
 convenience, all of the top-level functions use a global state available
-via the spew.Config global.
+via the spew.Default global.
 
 It is also possible to create a ConfigState instance that provides methods
 equivalent to the top-level functions.  This allows concurrent configuration

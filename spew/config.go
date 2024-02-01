@@ -24,7 +24,7 @@ import (
 )
 
 // ConfigState houses the configuration options used by spew to format and
-// display values.  There is a global instance, Config, that is used to control
+// display values.  There is a global instance, Default, that is used to control
 // all top-level Formatter and Dump functionality.  Each ConfigState instance
 // provides methods equivalent to the top-level functions.
 //
@@ -136,11 +136,10 @@ type ConfigState struct {
 	SpewKeys bool
 }
 
-// Config is the active configuration of the top-level functions.
-// The configuration can be changed by modifying the contents of spew.Config.
-var Config = ConfigState{Indent: " "}
+// Default holds the configuration of the top-level functions.
+var Default = ConfigState{Indent: " "}
 
-// CleanConfig is a pre-build ConfigState which offers the "best" configuration
+// CleanConfig is a pre-built ConfigState which offers the "best" configuration
 // for clean, simple output.  In other words, most of the decorations are
 // disabled.
 var CleanConfig = ConfigState{
